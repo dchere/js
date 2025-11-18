@@ -1,0 +1,27 @@
+{
+  // CodeMetrics Extension Settings (Google-style strict limits)
+  // This controls the complexity visualization you see in VS Code
+  
+  // Complexity threshold levels:
+  // Green (0-5) → Yellow (6-10) → Orange (11-15) → Red (15+)
+  "codemetrics.basics.ComplexityLevelExtreme": 15,     // Red/Critical - Google limit
+  "codemetrics.basics.ComplexityLevelHigh": 10,        // Orange/High - Google warning
+  "codemetrics.basics.ComplexityLevelNormal": 5,       // Yellow/Medium
+  "codemetrics.basics.ComplexityLevelLow": 0,          // Green/Low
+  
+  // Additional settings
+  "codemetrics.basics.EnableMetrics": true,            // Enable/disable
+  "codemetrics.basics.MetricsForArrowFunctionsToggle": "On", // Show for arrow functions
+  "codemetrics.basics.CodeLensEnabled": true,          // Show above functions
+  "codemetrics.basics.DiagnosticsEnabled": false,      // Show in Problems panel
+  
+  // What to measure
+  "codemetrics.basics.ComplexityTemplate": "Complexity is {0}",
+  
+  // ESLint settings
+  "eslint.enable": true,
+  "eslint.run": "onType",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
+}
