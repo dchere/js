@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -308,5 +308,66 @@ describe('canPost - special characters', () => {
         expect(canPost("🎉".repeat(20))).toBe("short post"); // 20 emojis = 40 chars
         expect(canPost("🎉".repeat(21))).toBe("long post"); // 21 emojis = 42 chars
         expect(canPost("🎉".repeat(41))).toBe("invalid post"); // 41 emojis = 82 chars
+    });
+});
+
+describe('gcd', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(gcd(4, 6)).toBe(2);
+        expect(gcd(20, 15)).toBe(5);
+        expect(gcd(13, 17)).toBe(1);
+        expect(gcd(654, 456)).toBe(6);
+        expect(gcd(3456, 4320)).toBe(864);
+    });
+
+    test('small numbers', () => {
+        expect(gcd(1, 1)).toBe(1);
+        expect(gcd(2, 2)).toBe(2);
+        expect(gcd(2, 4)).toBe(2);
+        expect(gcd(3, 6)).toBe(3);
+        expect(gcd(5, 10)).toBe(5);
+        expect(gcd(7, 14)).toBe(7);
+    });
+
+    test('coprime numbers - GCD is 1', () => {
+        expect(gcd(7, 11)).toBe(1);
+        expect(gcd(13, 17)).toBe(1);
+        expect(gcd(15, 28)).toBe(1);
+        expect(gcd(21, 32)).toBe(1);
+        expect(gcd(17, 19)).toBe(1);
+    });
+});
+
+describe('gcd - more test cases', () => {
+    test('one number divides the other', () => {
+        expect(gcd(12, 3)).toBe(3);
+        expect(gcd(15, 5)).toBe(5);
+        expect(gcd(100, 25)).toBe(25);
+        expect(gcd(48, 16)).toBe(16);
+    });
+
+    test('commutative property', () => {
+        expect(gcd(12, 18)).toBe(gcd(18, 12));
+        expect(gcd(100, 50)).toBe(gcd(50, 100));
+        expect(gcd(7, 21)).toBe(gcd(21, 7));
+    });
+
+    test('larger numbers', () => {
+        expect(gcd(1071, 462)).toBe(21);
+        expect(gcd(270, 192)).toBe(6);
+        expect(gcd(1024, 768)).toBe(256);
+        expect(gcd(999, 111)).toBe(111);
+    });
+
+    test('GCD with 1', () => {
+        expect(gcd(1, 5)).toBe(1);
+        expect(gcd(1, 100)).toBe(1);
+        expect(gcd(1, 999)).toBe(1);
+    });
+
+    test('identical numbers', () => {
+        expect(gcd(42, 42)).toBe(42);
+        expect(gcd(100, 100)).toBe(100);
+        expect(gcd(999, 999)).toBe(999);
     });
 });

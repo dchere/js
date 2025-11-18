@@ -74,4 +74,17 @@ function canPost(message) {
     return "invalid post";
 }
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost };
+/**
+ * Returns the greatest common divisor (GCD) of two positive integers.
+ * Uses the Euclidean algorithm.
+ */
+function gcd(x, y) {
+  while (y !== 0) {
+    const temp = y;
+    y = x % y;
+    x = temp;
+  }
+  return x;
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd };
