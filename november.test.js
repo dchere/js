@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -369,5 +369,801 @@ describe('gcd - more test cases', () => {
         expect(gcd(42, 42)).toBe(42);
         expect(gcd(100, 100)).toBe(100);
         expect(gcd(999, 999)).toBe(999);
+    });
+});
+
+describe('convert', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(convert("# My level 1 heading")).toBe("<h1>My level 1 heading</h1>");
+        expect(convert("My heading")).toBe("Invalid format");
+        expect(convert("##### My level 5 heading")).toBe("<h5>My level 5 heading</h5>");
+        expect(convert("#My heading")).toBe("Invalid format");
+        expect(convert("  ###  My level 3 heading")).toBe("<h3>My level 3 heading</h3>");
+        expect(convert("####### My level 7 heading")).toBe("Invalid format");
+        expect(convert("## My #2 heading")).toBe("<h2>My #2 heading</h2>");
+    });
+
+    test('all heading levels 1-6', () => {
+        expect(convert("# Heading 1")).toBe("<h1>Heading 1</h1>");
+        expect(convert("## Heading 2")).toBe("<h2>Heading 2</h2>");
+        expect(convert("### Heading 3")).toBe("<h3>Heading 3</h3>");
+        expect(convert("#### Heading 4")).toBe("<h4>Heading 4</h4>");
+        expect(convert("##### Heading 5")).toBe("<h5>Heading 5</h5>");
+        expect(convert("###### Heading 6")).toBe("<h6>Heading 6</h6>");
+    });
+
+    test('headings with leading spaces', () => {
+        expect(convert(" # Heading with 1 space")).toBe("<h1>Heading with 1 space</h1>");
+        expect(convert("  ## Heading with 2 spaces")).toBe("<h2>Heading with 2 spaces</h2>");
+        expect(convert("   ### Heading with 3 spaces")).toBe("<h3>Heading with 3 spaces</h3>");
+    });
+});
+
+describe('convert - invalid formats', () => {
+    test('no hash symbols', () => {
+        expect(convert("No hash symbols")).toBe("Invalid format");
+        expect(convert("Just text")).toBe("Invalid format");
+        expect(convert("")).toBe("Invalid format");
+    });
+
+    test('too many hash symbols', () => {
+        expect(convert("####### Seven hashes")).toBe("Invalid format");
+        expect(convert("######## Eight hashes")).toBe("Invalid format");
+    });
+
+    test('missing space after hash', () => {
+        expect(convert("#NoSpace")).toBe("Invalid format");
+        expect(convert("##NoSpace")).toBe("Invalid format");
+        expect(convert("######NoSpace")).toBe("Invalid format");
+    });
+
+    test('hash not at start', () => {
+        expect(convert("Text # Not at start")).toBe("Invalid format");
+        expect(convert("a # Heading")).toBe("Invalid format");
+    });
+
+    test('only hashes without text', () => {
+        expect(convert("#")).toBe("Invalid format");
+        expect(convert("# ")).toBe("Invalid format");
+        expect(convert("##")).toBe("Invalid format");
+        expect(convert("## ")).toBe("Invalid format");
+    });
+});
+
+describe('convert - edge cases', () => {
+    test('headings with special characters', () => {
+        expect(convert("# Heading with !@#$%")).toBe("<h1>Heading with !@#$%</h1>");
+        expect(convert("## Heading & symbols")).toBe("<h2>Heading & symbols</h2>");
+        expect(convert("### Heading (with) [brackets]")).toBe("<h3>Heading (with) [brackets]</h3>");
+    });
+
+    test('headings with numbers', () => {
+        expect(convert("# 123 Heading")).toBe("<h1>123 Heading</h1>");
+        expect(convert("## Heading 456")).toBe("<h2>Heading 456</h2>");
+        expect(convert("### 2025 Year")).toBe("<h3>2025 Year</h3>");
+    });
+
+    test('headings with multiple spaces', () => {
+        expect(convert("#  Multiple  spaces  in  text")).toBe("<h1>Multiple  spaces  in  text</h1>");
+        expect(convert("##   Extra   spaces")).toBe("<h2>Extra   spaces</h2>");
+    });
+
+    test('headings with hashes in text', () => {
+        expect(convert("# Use # for headings")).toBe("<h1>Use # for headings</h1>");
+        expect(convert("## #hashtag in heading")).toBe("<h2>#hashtag in heading</h2>");
+        expect(convert("### Multiple ### hashes ### here")).toBe("<h3>Multiple ### hashes ### here</h3>");
+    });
+
+    test('minimal valid headings', () => {
+        expect(convert("# a")).toBe("<h1>a</h1>");
+        expect(convert("###### z")).toBe("<h6>z</h6>");
+        expect(convert("## 1")).toBe("<h2>1</h2>");
+    });
+});
+
+describe('infected', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(infected(1)).toBe(2);
+        expect(infected(3)).toBe(6);
+        expect(infected(8)).toBe(152);
+        expect(infected(17)).toBe(39808);
+        expect(infected(25)).toBe(5217638);
+    });
+
+    test('day 0 - initial infection', () => {
+        expect(infected(0)).toBe(1);
+    });
+
+    test('first few days without patch', () => {
+        expect(infected(1)).toBe(2);
+        expect(infected(2)).toBe(4);
+    });
+
+    test('day 3 - first patch applied', () => {
+        // Day 3: 8 infected, patch 20% = ceil(1.6) = 2, result = 6
+        expect(infected(3)).toBe(6);
+    });
+
+    test('day 6 - second patch applied', () => {
+        // Day 0: 1, Day 1: 2, Day 2: 4
+        // Day 3: 8 -> patch 2 -> 6
+        // Day 4: 12, Day 5: 24
+        // Day 6: 48 -> patch ceil(9.6) = 10 -> 38
+        expect(infected(6)).toBe(38);
+    });
+});
+
+describe('infected - more test cases', () => {
+    test('day 9 - third patch applied', () => {
+        // Day 9: 304 -> patch ceil(60.8) = 61 -> 243
+        expect(infected(9)).toBe(243);
+    });
+
+    test('patch days sequence', () => {
+        expect(infected(3)).toBe(6);
+        expect(infected(6)).toBe(38);
+        expect(infected(9)).toBe(243);
+        expect(infected(12)).toBe(1555);
+    });
+
+    test('days between patches', () => {
+        // Day 4: from 6 -> 12
+        expect(infected(4)).toBe(12);
+        // Day 5: from 12 -> 24
+        expect(infected(5)).toBe(24);
+        // Day 7: from 38 -> 76
+        expect(infected(7)).toBe(76);
+        // Day 8: from 76 -> 152
+        expect(infected(8)).toBe(152);
+    });
+
+    test('larger day values', () => {
+        expect(infected(15)).toBe(9952);
+        expect(infected(20)).toBe(254768);
+        expect(infected(25)).toBe(5217638);
+    });
+
+    test('verify patch calculation', () => {
+        // Day 3: 8 * 0.2 = 1.6 -> ceil = 2 -> 6
+        expect(infected(3)).toBe(6);
+        // Day 6: 48 * 0.2 = 9.6 -> ceil = 10 -> 38
+        expect(infected(6)).toBe(38);
+        // Day 9: 304 * 0.2 = 60.8 -> ceil = 61 -> 243
+        expect(infected(9)).toBe(243);
+    });
+});
+
+describe('getExtension', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(getExtension("document.txt")).toBe("txt");
+        expect(getExtension("README")).toBe("none");
+        expect(getExtension("image.PNG")).toBe("PNG");
+        expect(getExtension(".gitignore")).toBe("gitignore");
+        expect(getExtension("archive.tar.gz")).toBe("gz");
+        expect(getExtension("final.draft.")).toBe("none");
+    });
+
+    test('common file extensions', () => {
+        expect(getExtension("script.js")).toBe("js");
+        expect(getExtension("style.css")).toBe("css");
+        expect(getExtension("index.html")).toBe("html");
+        expect(getExtension("data.json")).toBe("json");
+        expect(getExtension("photo.jpg")).toBe("jpg");
+        expect(getExtension("video.mp4")).toBe("mp4");
+    });
+
+    test('case sensitivity preserved', () => {
+        expect(getExtension("Document.TXT")).toBe("TXT");
+        expect(getExtension("Image.Png")).toBe("Png");
+        expect(getExtension("FILE.PDF")).toBe("PDF");
+    });
+});
+
+describe('getExtension - edge cases', () => {
+    test('multiple dots in filename', () => {
+        expect(getExtension("my.file.txt")).toBe("txt");
+        expect(getExtension("backup.2024.11.19.tar.gz")).toBe("gz");
+        expect(getExtension("v1.0.0.release.zip")).toBe("zip");
+    });
+
+    test('files without extensions', () => {
+        expect(getExtension("Makefile")).toBe("none");
+        expect(getExtension("LICENSE")).toBe("none");
+        expect(getExtension("dockerfile")).toBe("none");
+    });
+
+    test('hidden files (starting with dot)', () => {
+        expect(getExtension(".bashrc")).toBe("bashrc");
+        expect(getExtension(".eslintrc")).toBe("eslintrc");
+        expect(getExtension(".env")).toBe("env");
+    });
+
+    test('files ending with dot', () => {
+        expect(getExtension("file.")).toBe("none");
+        expect(getExtension("document.txt.")).toBe("none");
+        expect(getExtension("test.")).toBe("none");
+    });
+
+    test('long extensions', () => {
+        expect(getExtension("data.typescript")).toBe("typescript");
+        expect(getExtension("file.configuration")).toBe("configuration");
+    });
+
+    test('single character extensions', () => {
+        expect(getExtension("file.c")).toBe("c");
+        expect(getExtension("program.h")).toBe("h");
+        expect(getExtension("data.r")).toBe("r");
+    });
+
+    test('numeric extensions', () => {
+        expect(getExtension("backup.001")).toBe("001");
+        expect(getExtension("archive.7z")).toBe("7z");
+    });
+});
+
+describe('imageSearch', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(imageSearch(["dog.png", "cat.jpg", "parrot.jpeg"], "dog")).toEqual(["dog.png"]);
+        expect(imageSearch(["Sunset.jpg", "Beach.png", "sunflower.jpeg"], "sun")).toEqual(["Sunset.jpg", "sunflower.jpeg"]);
+        expect(imageSearch(["Moon.png", "sun.jpeg", "stars.png"], "PNG")).toEqual(["Moon.png", "stars.png"]);
+        expect(imageSearch(["cat.jpg", "dogToy.jpeg", "kitty-cat.png", "catNip.jpeg", "franken_cat.gif"], "Cat")).toEqual(["cat.jpg", "kitty-cat.png", "catNip.jpeg", "franken_cat.gif"]);
+    });
+
+    test('case insensitive matching', () => {
+        expect(imageSearch(["Photo.jpg", "photo.png", "PHOTO.gif"], "photo")).toEqual(["Photo.jpg", "photo.png", "PHOTO.gif"]);
+        expect(imageSearch(["Beach.jpg", "BEACH.png", "beach.gif"], "BEACH")).toEqual(["Beach.jpg", "BEACH.png", "beach.gif"]);
+    });
+
+    test('partial matches in filename', () => {
+        expect(imageSearch(["vacation_beach.jpg", "beachside.png", "my_beach_photo.gif"], "beach")).toEqual(["vacation_beach.jpg", "beachside.png", "my_beach_photo.gif"]);
+        expect(imageSearch(["mountain1.jpg", "mountain2.png", "hill.gif"], "mountain")).toEqual(["mountain1.jpg", "mountain2.png"]);
+    });
+
+    test('no matches found', () => {
+        expect(imageSearch(["cat.jpg", "dog.png", "bird.gif"], "fish")).toEqual([]);
+        expect(imageSearch(["sunset.jpg", "sunrise.png"], "moon")).toEqual([]);
+    });
+});
+
+describe('imageSearch - edge cases', () => {
+    test('empty array', () => {
+        expect(imageSearch([], "dog")).toEqual([]);
+    });
+
+    test('empty search term', () => {
+        expect(imageSearch(["cat.jpg", "dog.png"], "")).toEqual(["cat.jpg", "dog.png"]);
+    });
+
+    test('search term in extension', () => {
+        expect(imageSearch(["document.png", "photo.jpg", "image.png"], "png")).toEqual(["document.png", "image.png"]);
+        expect(imageSearch(["file.jpeg", "pic.jpg", "img.png"], "jp")).toEqual(["file.jpeg", "pic.jpg"]);
+    });
+
+    test('maintains original order', () => {
+        const images = ["zebra.jpg", "apple.png", "banana.gif", "cherry.jpg"];
+        expect(imageSearch(images, "jpg")).toEqual(["zebra.jpg", "cherry.jpg"]);
+    });
+
+    test('special characters in filenames', () => {
+        expect(imageSearch(["photo_1.jpg", "photo-2.png", "photo.3.gif"], "photo")).toEqual(["photo_1.jpg", "photo-2.png", "photo.3.gif"]);
+        expect(imageSearch(["img@home.jpg", "pic#1.png"], "@")).toEqual(["img@home.jpg"]);
+    });
+
+    test('numbers in search term', () => {
+        expect(imageSearch(["file1.jpg", "file2.png", "file10.gif"], "1")).toEqual(["file1.jpg", "file10.gif"]);
+        expect(imageSearch(["2020-photo.jpg", "2021-image.png"], "2020")).toEqual(["2020-photo.jpg"]);
+    });
+
+    test('single image match', () => {
+        expect(imageSearch(["sunset.jpg"], "sunset")).toEqual(["sunset.jpg"]);
+        expect(imageSearch(["sunset.jpg"], "sunrise")).toEqual([]);
+    });
+});
+
+describe('generateSignature', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(generateSignature("Quinn Waverly", "Founder and CEO", "TechCo")).toBe("--Quinn Waverly, Founder and CEO at TechCo");
+        expect(generateSignature("Alice Reed", "Engineer", "TechCo")).toBe(">>Alice Reed, Engineer at TechCo");
+        expect(generateSignature("Tina Vaughn", "Developer", "example.com")).toBe("::Tina Vaughn, Developer at example.com");
+        expect(generateSignature("B. B.", "Product Tester", "AcmeCorp")).toBe(">>B. B., Product Tester at AcmeCorp");
+        expect(generateSignature("windstorm", "Cloud Architect", "Atmospheronics")).toBe("::windstorm, Cloud Architect at Atmospheronics");
+    });
+
+    test('names starting with A-I (>> prefix)', () => {
+        expect(generateSignature("Alice Johnson", "Developer", "Tech Inc")).toBe(">>Alice Johnson, Developer at Tech Inc");
+        expect(generateSignature("Bob Smith", "Designer", "Creative Co")).toBe(">>Bob Smith, Designer at Creative Co");
+        expect(generateSignature("Charlie Brown", "Manager", "Corp")).toBe(">>Charlie Brown, Manager at Corp");
+        expect(generateSignature("Diana Prince", "Hero", "Justice League")).toBe(">>Diana Prince, Hero at Justice League");
+        expect(generateSignature("Eve Adams", "Analyst", "DataCo")).toBe(">>Eve Adams, Analyst at DataCo");
+        expect(generateSignature("Frank Miller", "Writer", "DC")).toBe(">>Frank Miller, Writer at DC");
+        expect(generateSignature("Grace Hopper", "Programmer", "Navy")).toBe(">>Grace Hopper, Programmer at Navy");
+        expect(generateSignature("Henry Ford", "Founder", "Ford")).toBe(">>Henry Ford, Founder at Ford");
+        expect(generateSignature("Iris West", "Journalist", "Central City")).toBe(">>Iris West, Journalist at Central City");
+    });
+});
+
+describe('generateSignature - more prefixes', () => {
+    test('names starting with J-R (-- prefix)', () => {
+        expect(generateSignature("Jack Ryan", "Analyst", "CIA")).toBe("--Jack Ryan, Analyst at CIA");
+        expect(generateSignature("Kate Bishop", "Archer", "Young Avengers")).toBe("--Kate Bishop, Archer at Young Avengers");
+        expect(generateSignature("Lara Croft", "Archaeologist", "Tomb Raider Inc")).toBe("--Lara Croft, Archaeologist at Tomb Raider Inc");
+        expect(generateSignature("Mike Ross", "Associate", "Pearson Specter")).toBe("--Mike Ross, Associate at Pearson Specter");
+        expect(generateSignature("Nancy Drew", "Detective", "River Heights")).toBe("--Nancy Drew, Detective at River Heights");
+        expect(generateSignature("Oscar Martinez", "Accountant", "Dunder Mifflin")).toBe("--Oscar Martinez, Accountant at Dunder Mifflin");
+        expect(generateSignature("Peter Parker", "Photographer", "Daily Bugle")).toBe("--Peter Parker, Photographer at Daily Bugle");
+        expect(generateSignature("Rachel Green", "Buyer", "Ralph Lauren")).toBe("--Rachel Green, Buyer at Ralph Lauren");
+    });
+
+    test('names starting with S-Z (:: prefix)', () => {
+        expect(generateSignature("Sarah Connor", "Resistance Leader", "Future")).toBe("::Sarah Connor, Resistance Leader at Future");
+        expect(generateSignature("Tony Stark", "CEO", "Stark Industries")).toBe("::Tony Stark, CEO at Stark Industries");
+        expect(generateSignature("Uma Thurman", "Actress", "Hollywood")).toBe("::Uma Thurman, Actress at Hollywood");
+        expect(generateSignature("Victor Stone", "Cyborg", "Justice League")).toBe("::Victor Stone, Cyborg at Justice League");
+        expect(generateSignature("Wanda Maximoff", "Witch", "Avengers")).toBe("::Wanda Maximoff, Witch at Avengers");
+        expect(generateSignature("Xena Warrior", "Princess", "Greece")).toBe("::Xena Warrior, Princess at Greece");
+        expect(generateSignature("Yoda Master", "Jedi", "Jedi Council")).toBe("::Yoda Master, Jedi at Jedi Council");
+        expect(generateSignature("Zelda Princess", "Ruler", "Hyrule")).toBe("::Zelda Princess, Ruler at Hyrule");
+    });
+
+    test('boundary letters', () => {
+        expect(generateSignature("Amy Adams", "Actor", "Films")).toBe(">>Amy Adams, Actor at Films");
+        expect(generateSignature("Ian McKellen", "Actor", "Theatre")).toBe(">>Ian McKellen, Actor at Theatre");
+        expect(generateSignature("James Bond", "Agent", "MI6")).toBe("--James Bond, Agent at MI6");
+        expect(generateSignature("Ryan Reynolds", "Actor", "Marvel")).toBe("--Ryan Reynolds, Actor at Marvel");
+        expect(generateSignature("Sam Wilson", "Falcon", "Avengers")).toBe("::Sam Wilson, Falcon at Avengers");
+        expect(generateSignature("Zoe Saldana", "Actor", "Marvel")).toBe("::Zoe Saldana, Actor at Marvel");
+    });
+});
+
+describe('getWeekday', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(getWeekday("2025-11-06")).toBe("Thursday");
+        expect(getWeekday("1999-12-31")).toBe("Friday");
+        expect(getWeekday("1111-11-11")).toBe("Saturday");
+        expect(getWeekday("2112-12-21")).toBe("Wednesday");
+        expect(getWeekday("2345-10-01")).toBe("Monday");
+    });
+
+    test('all days of the week', () => {
+        expect(getWeekday("2025-11-16")).toBe("Sunday");
+        expect(getWeekday("2025-11-17")).toBe("Monday");
+        expect(getWeekday("2025-11-18")).toBe("Tuesday");
+        expect(getWeekday("2025-11-19")).toBe("Wednesday");
+        expect(getWeekday("2025-11-20")).toBe("Thursday");
+        expect(getWeekday("2025-11-21")).toBe("Friday");
+        expect(getWeekday("2025-11-22")).toBe("Saturday");
+    });
+
+    test('famous historical dates', () => {
+        expect(getWeekday("1776-07-04")).toBe("Thursday");
+        expect(getWeekday("1969-07-20")).toBe("Sunday");
+        expect(getWeekday("2001-09-11")).toBe("Tuesday");
+    });
+});
+
+describe('getWeekday - edge cases', () => {
+    test('leap year dates', () => {
+        expect(getWeekday("2000-02-29")).toBe("Tuesday");
+        expect(getWeekday("2024-02-29")).toBe("Thursday");
+        expect(getWeekday("2020-02-29")).toBe("Saturday");
+    });
+
+    test('start and end of year', () => {
+        expect(getWeekday("2025-01-01")).toBe("Wednesday");
+        expect(getWeekday("2025-12-31")).toBe("Wednesday");
+        expect(getWeekday("2024-01-01")).toBe("Monday");
+        expect(getWeekday("2024-12-31")).toBe("Tuesday");
+    });
+
+    test('first day of each month in 2025', () => {
+        expect(getWeekday("2025-01-01")).toBe("Wednesday");
+        expect(getWeekday("2025-02-01")).toBe("Saturday");
+        expect(getWeekday("2025-03-01")).toBe("Saturday");
+        expect(getWeekday("2025-04-01")).toBe("Tuesday");
+        expect(getWeekday("2025-05-01")).toBe("Thursday");
+        expect(getWeekday("2025-06-01")).toBe("Sunday");
+        expect(getWeekday("2025-07-01")).toBe("Tuesday");
+        expect(getWeekday("2025-08-01")).toBe("Friday");
+        expect(getWeekday("2025-09-01")).toBe("Monday");
+        expect(getWeekday("2025-10-01")).toBe("Wednesday");
+        expect(getWeekday("2025-11-01")).toBe("Saturday");
+        expect(getWeekday("2025-12-01")).toBe("Monday");
+    });
+
+    test('dates far in the past', () => {
+        expect(getWeekday("1000-01-01")).toBe("Wednesday");
+        expect(getWeekday("1900-01-01")).toBe("Monday");
+    });
+
+    test('dates far in the future', () => {
+        expect(getWeekday("3000-01-01")).toBe("Wednesday");
+        expect(getWeekday("2100-01-01")).toBe("Friday");
+    });
+});
+
+describe('daysUntilWeekend', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(daysUntilWeekend("2025-11-14")).toBe("1 day until the weekend.");
+        expect(daysUntilWeekend("2025-01-01")).toBe("3 days until the weekend.");
+        expect(daysUntilWeekend("2025-12-06")).toBe("It's the weekend!");
+        expect(daysUntilWeekend("2026-01-27")).toBe("4 days until the weekend.");
+        expect(daysUntilWeekend("2026-09-07")).toBe("5 days until the weekend.");
+        expect(daysUntilWeekend("2026-11-29")).toBe("It's the weekend!");
+    });
+
+    test('all weekdays counting down', () => {
+        expect(daysUntilWeekend("2025-11-17")).toBe("5 days until the weekend.");
+        expect(daysUntilWeekend("2025-11-18")).toBe("4 days until the weekend.");
+        expect(daysUntilWeekend("2025-11-19")).toBe("3 days until the weekend.");
+        expect(daysUntilWeekend("2025-11-20")).toBe("2 days until the weekend.");
+        expect(daysUntilWeekend("2025-11-21")).toBe("1 day until the weekend.");
+    });
+
+    test('weekend days', () => {
+        expect(daysUntilWeekend("2025-11-22")).toBe("It's the weekend!");
+        expect(daysUntilWeekend("2025-11-23")).toBe("It's the weekend!");
+    });
+
+    test('singular vs plural day/days', () => {
+        expect(daysUntilWeekend("2025-11-21")).toBe("1 day until the weekend.");
+        expect(daysUntilWeekend("2025-11-20")).toBe("2 days until the weekend.");
+        expect(daysUntilWeekend("2025-11-19")).toBe("3 days until the weekend.");
+        expect(daysUntilWeekend("2025-11-18")).toBe("4 days until the weekend.");
+        expect(daysUntilWeekend("2025-11-17")).toBe("5 days until the weekend.");
+    });
+});
+
+describe('daysUntilWeekend - more test cases', () => {
+    test('start of year', () => {
+        expect(daysUntilWeekend("2025-01-01")).toBe("3 days until the weekend.");
+        expect(daysUntilWeekend("2025-01-04")).toBe("It's the weekend!");
+        expect(daysUntilWeekend("2025-01-05")).toBe("It's the weekend!");
+    });
+
+    test('various dates throughout the year', () => {
+        expect(daysUntilWeekend("2025-02-14")).toBe("1 day until the weekend.");
+        expect(daysUntilWeekend("2025-03-20")).toBe("2 days until the weekend.");
+        expect(daysUntilWeekend("2025-04-09")).toBe("3 days until the weekend.");
+        expect(daysUntilWeekend("2025-05-08")).toBe("2 days until the weekend.");
+    });
+
+    test('leap year dates', () => {
+        expect(daysUntilWeekend("2024-02-29")).toBe("2 days until the weekend.");
+        expect(daysUntilWeekend("2020-02-29")).toBe("It's the weekend!");
+    });
+
+    test('consecutive Saturdays and Sundays', () => {
+        expect(daysUntilWeekend("2025-11-22")).toBe("It's the weekend!");
+        expect(daysUntilWeekend("2025-11-23")).toBe("It's the weekend!");
+        expect(daysUntilWeekend("2025-11-29")).toBe("It's the weekend!");
+        expect(daysUntilWeekend("2025-11-30")).toBe("It's the weekend!");
+    });
+});
+
+describe('shiftArray', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(shiftArray([1, 2, 3], 1)).toEqual([2, 3, 1]);
+        expect(shiftArray([1, 2, 3], -1)).toEqual([3, 1, 2]);
+        expect(shiftArray(["alpha", "bravo", "charlie"], 5)).toEqual(["charlie", "alpha", "bravo"]);
+        expect(shiftArray(["alpha", "bravo", "charlie"], -11)).toEqual(["bravo", "charlie", "alpha"]);
+        expect(shiftArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 15)).toEqual([5, 6, 7, 8, 9, 0, 1, 2, 3, 4]);
+    });
+
+    test('shift left by small amounts', () => {
+        expect(shiftArray([1, 2, 3, 4, 5], 1)).toEqual([2, 3, 4, 5, 1]);
+        expect(shiftArray([1, 2, 3, 4, 5], 2)).toEqual([3, 4, 5, 1, 2]);
+        expect(shiftArray([1, 2, 3, 4, 5], 3)).toEqual([4, 5, 1, 2, 3]);
+        expect(shiftArray([1, 2, 3, 4, 5], 4)).toEqual([5, 1, 2, 3, 4]);
+    });
+
+    test('shift right by small amounts', () => {
+        expect(shiftArray([1, 2, 3, 4, 5], -1)).toEqual([5, 1, 2, 3, 4]);
+        expect(shiftArray([1, 2, 3, 4, 5], -2)).toEqual([4, 5, 1, 2, 3]);
+        expect(shiftArray([1, 2, 3, 4, 5], -3)).toEqual([3, 4, 5, 1, 2]);
+        expect(shiftArray([1, 2, 3, 4, 5], -4)).toEqual([2, 3, 4, 5, 1]);
+    });
+
+    test('shift by array length returns same array', () => {
+        expect(shiftArray([1, 2, 3], 3)).toEqual([1, 2, 3]);
+        expect(shiftArray([1, 2, 3], -3)).toEqual([1, 2, 3]);
+        expect(shiftArray([1, 2, 3, 4, 5], 5)).toEqual([1, 2, 3, 4, 5]);
+        expect(shiftArray([1, 2, 3, 4, 5], -5)).toEqual([1, 2, 3, 4, 5]);
+    });
+});
+
+describe('shiftArray - edge cases', () => {
+    test('shift by zero', () => {
+        expect(shiftArray([1, 2, 3], 0)).toEqual([1, 2, 3]);
+        expect(shiftArray([10, 20, 30, 40], 0)).toEqual([10, 20, 30, 40]);
+    });
+
+    test('shift larger than array length wraps around', () => {
+        expect(shiftArray([1, 2, 3], 4)).toEqual([2, 3, 1]);
+        expect(shiftArray([1, 2, 3], 7)).toEqual([2, 3, 1]);
+        expect(shiftArray([1, 2, 3, 4], 9)).toEqual([2, 3, 4, 1]);
+    });
+
+    test('shift negative larger than array length wraps around', () => {
+        expect(shiftArray([1, 2, 3], -4)).toEqual([3, 1, 2]);
+        expect(shiftArray([1, 2, 3], -7)).toEqual([3, 1, 2]);
+        expect(shiftArray([1, 2, 3, 4], -9)).toEqual([4, 1, 2, 3]);
+    });
+
+    test('empty array', () => {
+        expect(shiftArray([], 5)).toEqual([]);
+        expect(shiftArray([], -5)).toEqual([]);
+    });
+
+    test('single element array', () => {
+        expect(shiftArray([42], 1)).toEqual([42]);
+        expect(shiftArray([42], -1)).toEqual([42]);
+        expect(shiftArray([42], 10)).toEqual([42]);
+    });
+
+    test('two element array', () => {
+        expect(shiftArray([1, 2], 1)).toEqual([2, 1]);
+        expect(shiftArray([1, 2], -1)).toEqual([2, 1]);
+        expect(shiftArray([1, 2], 3)).toEqual([2, 1]);
+    });
+
+    test('array with different types', () => {
+        expect(shiftArray([1, "two", true, null], 2)).toEqual([true, null, 1, "two"]);
+        expect(shiftArray([1, "two", true, null], -2)).toEqual([true, null, 1, "two"]);
+    });
+
+    test('large shift values', () => {
+        expect(shiftArray([1, 2, 3], 100)).toEqual([2, 3, 1]);
+        expect(shiftArray([1, 2, 3], -100)).toEqual([3, 1, 2]);
+    });
+});
+
+describe('count - basic tests', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(count("Hello World")).toEqual([3, 7]);
+        expect(count("JavaScript")).toEqual([3, 7]);
+        expect(count("Python")).toEqual([1, 5]);
+        expect(count("freeCodeCamp")).toEqual([5, 7]);
+        expect(count("Hello, World!")).toEqual([3, 7]);
+        expect(count("The quick brown fox jumps over the lazy dog.")).toEqual([11, 24]);
+    });
+
+    test('only vowels', () => {
+        expect(count("aeiou")).toEqual([5, 0]);
+        expect(count("AEIOU")).toEqual([5, 0]);
+        expect(count("AeIoU")).toEqual([5, 0]);
+    });
+
+    test('only consonants', () => {
+        expect(count("bcdfg")).toEqual([0, 5]);
+        expect(count("BCDFG")).toEqual([0, 5]);
+        expect(count("BcDfG")).toEqual([0, 5]);
+    });
+
+    test('empty string', () => {
+        expect(count("")).toEqual([0, 0]);
+    });
+});
+
+describe('count - edge cases', () => {
+    test('only non-letter characters', () => {
+        expect(count("123")).toEqual([0, 0]);
+        expect(count("!@#$%")).toEqual([0, 0]);
+        expect(count("   ")).toEqual([0, 0]);
+        expect(count(".,;:")).toEqual([0, 0]);
+    });
+
+    test('mixed letters and numbers', () => {
+        expect(count("abc123def")).toEqual([2, 4]);
+        expect(count("H3ll0 W0rld")).toEqual([0, 7]);
+    });
+
+    test('special characters with letters', () => {
+        expect(count("Hello!")).toEqual([2, 3]);
+        expect(count("C++")).toEqual([0, 1]);
+        expect(count("a@b#c$d%e")).toEqual([2, 3]);
+    });
+
+    test('single character', () => {
+        expect(count("a")).toEqual([1, 0]);
+        expect(count("b")).toEqual([0, 1]);
+        expect(count("E")).toEqual([1, 0]);
+        expect(count("Z")).toEqual([0, 1]);
+        expect(count("5")).toEqual([0, 0]);
+    });
+});
+
+describe('findWord - basic tests', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(findWord([["a", "c", "t"], ["t", "a", "t"], ["c", "t", "c"]], "cat"))
+            .toEqual([[0, 1], [2, 1]]);
+        expect(findWord([["d", "o", "g"], ["o", "g", "d"], ["d", "g", "o"]], "dog"))
+            .toEqual([[0, 0], [0, 2]]);
+        expect(findWord([["h", "i", "s", "h"], ["i", "s", "f", "s"], ["f", "s", "i", "i"], ["s", "h", "i", "f"]], "fish"))
+            .toEqual([[3, 3], [0, 3]]);
+        expect(findWord([["f", "x", "o", "x"], ["o", "x", "o", "f"], ["f", "o", "f", "x"], ["f", "x", "x", "o"]], "fox"))
+            .toEqual([[1, 3], [1, 1]]);
+    });
+
+    test('horizontal left to right', () => {
+        expect(findWord([["h", "e", "l", "l", "o"]], "hello"))
+            .toEqual([[0, 0], [0, 4]]);
+        expect(findWord([["a", "b", "c"], ["d", "e", "f"]], "abc"))
+            .toEqual([[0, 0], [0, 2]]);
+        expect(findWord([["x", "y", "z"], ["a", "b", "c"]], "abc"))
+            .toEqual([[1, 0], [1, 2]]);
+    });
+
+    test('horizontal right to left', () => {
+        expect(findWord([["o", "l", "l", "e", "h"]], "hello"))
+            .toEqual([[0, 4], [0, 0]]);
+        expect(findWord([["c", "b", "a"], ["f", "e", "d"]], "abc"))
+            .toEqual([[0, 2], [0, 0]]);
+    });
+});
+
+describe('findWord - directional tests', () => {
+    test('vertical top to bottom', () => {
+        expect(findWord([["h"], ["e"], ["l"], ["l"], ["o"]], "hello"))
+            .toEqual([[0, 0], [4, 0]]);
+        expect(findWord([["a", "x"], ["b", "y"], ["c", "z"]], "abc"))
+            .toEqual([[0, 0], [2, 0]]);
+    });
+
+    test('vertical bottom to top', () => {
+        expect(findWord([["o"], ["l"], ["l"], ["e"], ["h"]], "hello"))
+            .toEqual([[4, 0], [0, 0]]);
+        expect(findWord([["c", "z"], ["b", "y"], ["a", "x"]], "abc"))
+            .toEqual([[2, 0], [0, 0]]);
+    });
+
+    test('single character word', () => {
+        expect(findWord([["a", "b"], ["c", "d"]], "a"))
+            .toEqual([[0, 0], [0, 0]]);
+        expect(findWord([["x", "y"], ["z", "a"]], "a"))
+            .toEqual([[1, 1], [1, 1]]);
+    });
+
+    test('two character words', () => {
+        expect(findWord([["a", "b", "c"]], "ab"))
+            .toEqual([[0, 0], [0, 1]]);
+        expect(findWord([["a"], ["b"], ["c"]], "ab"))
+            .toEqual([[0, 0], [1, 0]]);
+    });
+});
+
+describe('countWords - basic tests', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(countWords("Hello world")).toBe(2);
+        expect(countWords("The quick brown fox jumps over the lazy dog.")).toBe(9);
+        expect(countWords("I like coding challenges!")).toBe(4);
+        expect(countWords("Complete the challenge in JavaScript and Python.")).toBe(7);
+        expect(countWords("The missing semi-colon crashed the entire internet.")).toBe(7);
+    });
+
+    test('single word', () => {
+        expect(countWords("Hello")).toBe(1);
+        expect(countWords("JavaScript")).toBe(1);
+        expect(countWords("a")).toBe(1);
+    });
+
+    test('empty string', () => {
+        expect(countWords("")).toBe(0);
+    });
+
+    test('words with punctuation', () => {
+        expect(countWords("Hello, world!")).toBe(2);
+        expect(countWords("It's a beautiful day.")).toBe(4);
+        expect(countWords("What? Really?")).toBe(2);
+    });
+});
+
+describe('countWords - edge cases', () => {
+    test('multiple spaces treated as separate words', () => {
+        expect(countWords("Hello  world")).toBe(3);
+        expect(countWords("a   b")).toBe(4);
+    });
+
+    test('words with numbers', () => {
+        expect(countWords("I have 2 cats")).toBe(4);
+        expect(countWords("12345 67890")).toBe(2);
+    });
+
+    test('special characters', () => {
+        expect(countWords("@#$% test")).toBe(2);
+        expect(countWords("hello@world.com test")).toBe(2);
+    });
+
+    test('longer sentences', () => {
+        expect(countWords("This is a longer sentence with many words in it.")).toBe(10);
+        expect(countWords("a b c d e f g h i j")).toBe(10);
+    });
+});
+
+describe('combinations - basic tests', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(combinations(52)).toBe(1);
+        expect(combinations(1)).toBe(52);
+        expect(combinations(2)).toBe(1326);
+        expect(combinations(5)).toBe(2598960);
+        expect(combinations(10)).toBe(15820024220);
+        expect(combinations(50)).toBe(1326);
+    });
+
+    test('edge cases - 0 and full deck', () => {
+        expect(combinations(0)).toBe(1);
+        expect(combinations(52)).toBe(1);
+    });
+
+    test('symmetry property C(52, k) = C(52, 52-k)', () => {
+        expect(combinations(3)).toBe(combinations(49));
+        expect(combinations(10)).toBe(combinations(42));
+        expect(combinations(20)).toBe(combinations(32));
+    });
+});
+
+describe('combinations - more test cases', () => {
+    test('small numbers', () => {
+        expect(combinations(3)).toBe(22100);
+        expect(combinations(4)).toBe(270725);
+    });
+
+    test('middle range', () => {
+        expect(combinations(13)).toBe(635013559600);
+        expect(combinations(26)).toBe(495918532948104);
+    });
+
+    test('common poker hands', () => {
+        expect(combinations(5)).toBe(2598960); // 5-card poker hand
+        expect(combinations(7)).toBe(133784560); // 7-card poker hand
+    });
+});
+
+describe('buildMatrix - basic tests', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(buildMatrix(2, 3)).toEqual([[0, 0, 0], [0, 0, 0]]);
+        expect(buildMatrix(3, 2)).toEqual([[0, 0], [0, 0], [0, 0]]);
+        expect(buildMatrix(4, 3)).toEqual([[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+        expect(buildMatrix(9, 1)).toEqual([[0], [0], [0], [0], [0], [0], [0], [0], [0]]);
+    });
+
+    test('square matrices', () => {
+        expect(buildMatrix(1, 1)).toEqual([[0]]);
+        expect(buildMatrix(2, 2)).toEqual([[0, 0], [0, 0]]);
+        expect(buildMatrix(3, 3)).toEqual([[0, 0, 0], [0, 0, 0], [0, 0, 0]]);
+    });
+
+    test('single row', () => {
+        expect(buildMatrix(1, 5)).toEqual([[0, 0, 0, 0, 0]]);
+        expect(buildMatrix(1, 10)).toEqual([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]);
+    });
+
+    test('single column', () => {
+        expect(buildMatrix(5, 1)).toEqual([[0], [0], [0], [0], [0]]);
+        expect(buildMatrix(10, 1)).toEqual([[0], [0], [0], [0], [0], [0], [0], [0], [0], [0]]);
+    });
+});
+
+describe('buildMatrix - edge cases', () => {
+    test('rows and columns are independent arrays', () => {
+        const matrix = buildMatrix(3, 3);
+        matrix[0][0] = 1;
+        expect(matrix[0][0]).toBe(1);
+        expect(matrix[1][0]).toBe(0);
+        expect(matrix[2][0]).toBe(0);
+    });
+
+    test('large matrices', () => {
+        const matrix = buildMatrix(10, 10);
+        expect(matrix.length).toBe(10);
+        expect(matrix[0].length).toBe(10);
+        expect(matrix[9][9]).toBe(0);
+    });
+
+    test('rectangular matrices - more columns than rows', () => {
+        expect(buildMatrix(2, 5)).toEqual([[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]);
+    });
+
+    test('rectangular matrices - more rows than columns', () => {
+        expect(buildMatrix(5, 2)).toEqual([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
     });
 });

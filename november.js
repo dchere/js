@@ -87,4 +87,206 @@ function gcd(x, y) {
   return x;
 }
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd };
+/**
+ * Converts a Markdown heading to HTML heading tag.
+ * Valid format: optional spaces + 1-6 hashes + at least one space + text
+ */
+function convert(heading) {
+  const match = heading.match(/^( *)#{1,6} .+$/);
+  if (!match) return "Invalid format";
+  
+  const trimmed = heading.trim();
+  const hashCount = trimmed.indexOf(' ');
+  const headingText = trimmed.substring(hashCount).trim();
+  
+  return `<h${hashCount}>${headingText}</h${hashCount}>`;
+}
+
+/**
+ * Calculates the number of infected computers after given days.
+ * Day 0: 1 computer infected
+ * Each day: infected doubles
+ * Every 3rd day: patch reduces infected by 20% (rounded up)
+ */
+function infected(days) {
+
+  let infectedCount = 1;
+  for (let day = 1; day <= days; day++) {
+    infectedCount *= 2;   
+    if (day % 3 === 0) infectedCount -= Math.ceil(infectedCount * 0.2);
+  }
+  
+  return infectedCount;
+}
+
+/**
+ * Returns the file extension from a filename.
+ * Returns "none" if no extension or filename ends with period.
+ */
+function getExtension(filename) {
+
+  const lastDotIndex = filename.lastIndexOf('.'); 
+  if (lastDotIndex === -1 || lastDotIndex === filename.length - 1) {
+    return "none";
+  }
+  
+  return filename.substring(lastDotIndex + 1);
+}
+
+/**
+ * Searches for images matching a search term (case-insensitive).
+ * Returns matching images in the same order as the input array.
+ */
+function imageSearch(images, term) {
+  const lowerTerm = term.toLowerCase();
+  return images.filter(image => image.toLowerCase().includes(lowerTerm));
+}
+
+/**
+ * Generates an email signature with prefix based on first letter of name.
+ * A-I: >>, J-R: --, S-Z: ::
+ */
+function generateSignature(name, title, company) {
+
+  let prefix;
+  if (name[0] >= 'A' && name[0] <= 'I') {
+    prefix = '>>';
+  } else if (name[0] >= 'J' && name[0] <= 'R') {
+    prefix = '--';
+  } else {
+    prefix = '::';
+  }
+  
+  return `${prefix}${name}, ${title} at ${company}`;
+}
+
+/**
+ * Returns the day of the week for a given date in YYYY-MM-DD format.
+ * Ignores time zones by using UTC.
+ */
+function getWeekday(dateString) {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const date = new Date(dateString + 'T00:00:00Z');
+  return days[date.getUTCDay()];
+}
+
+/**
+ * Returns days until weekend or weekend message.
+ * Weekend is Saturday (6) and Sunday (0).
+ * Ignores time zones by using UTC.
+ */
+function daysUntilWeekend(dateString) {
+  const dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(getWeekday(dateString));
+  
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    return "It's the weekend!";
+  }
+  
+  const daysUntil = 6 - dayOfWeek;
+  const dayWord = daysUntil === 1 ? "day" : "days";
+  return `${daysUntil} ${dayWord} until the weekend.`;
+}
+
+/**
+ * Shifts an array by n positions.
+ * Positive n: shift left, Negative n: shift right.
+ * Wraps around the array.
+ */
+function shiftArray(arr, n) {
+  if (arr.length === 0) return arr;
+  
+  const shift = ((n % arr.length) + arr.length) % arr.length;
+  return [...arr.slice(shift), ...arr.slice(0, shift)];
+}
+
+function count(str) {
+
+  const vowelSet = new Set(['a', 'e', 'i', 'o', 'u']);
+  let vowels = 0;
+  let consonants = 0;
+  for (const char of str.toLowerCase()) {
+    if (char >= 'a' && char <= 'z') {
+    if (vowelSet.has(char)) {
+      vowels++;
+    } else {
+      consonants++;
+    }
+    }
+  }
+
+  return [vowels, consonants];
+}
+
+function searchHorizontal(matrix, word) {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c <= cols - word.length; c++) {
+      let match = true;
+      let revmatch = true;
+      const rightCol = cols - 1 - c;
+      for (let i = 0; i < word.length; i++) {
+        if (matrix[r][c + i] !== word[i]) match = false;
+        if (matrix[r][rightCol - i] !== word[i]) revmatch = false;
+        if (!(match || revmatch)) break;
+      }
+      if (match) return [[r, c], [r, c + word.length - 1]];
+      if (revmatch) return [[r, rightCol], [r, rightCol - word.length + 1]];
+    }
+  }
+  return null;
+}
+
+function searchVertical(matrix, word) {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  for (let c = 0; c < cols; c++) {
+    for (let r = 0; r <= rows - word.length; r++) {
+      let match = true;
+      let revmatch = true;
+      const bottomRow = rows - 1 - r;
+      for (let i = 0; i < word.length; i++) {
+        if (matrix[r + i][c] !== word[i]) match = false;
+        if (matrix[bottomRow - i][c] !== word[i]) revmatch = false;
+        if (!(match || revmatch)) break;
+      }
+      if (match) return [[r, c], [r + word.length - 1, c]];
+      if (revmatch) return [[bottomRow, c], [bottomRow - word.length + 1, c]];
+    }
+  }
+  return null;
+}
+
+function findWord(matrix, word) {
+  return searchHorizontal(matrix, word) ||
+         searchVertical(matrix, word) ||
+         null;
+}
+
+function countWords(sentence) {
+  if (sentence.length === 0) return 0;
+  return sentence.split(' ').length;
+}
+
+function combinations(cards) {
+  const n = 52; 
+  // Use symmetry: C(n, k) = C(n, n-k)
+  const k = cards > n - cards ? n - cards : cards;
+  
+  let result = 1;
+  for (let i = 0; i < k; i++) {
+    result = result * (n - i) / (i + 1);
+  }
+  
+  return Math.round(result); // Round to insure integer result
+}
+
+function buildMatrix(rows, cols) {
+  const matrix = [];
+  for (let i = 0; i < rows; i++) {
+    matrix.push(new Array(cols).fill(0));
+  }
+  return matrix;
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix };
