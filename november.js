@@ -289,4 +289,17 @@ function buildMatrix(rows, cols) {
   return matrix;
 }
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix };
+function longestWord(sentence) {
+
+  let longest = '';
+
+  const words = sentence.split(' '); 
+  for (const word of words) {
+    const lettersOnly = word.replace(/[^a-zA-Z]/g, '');
+    if (lettersOnly.length > longest.length) longest = lettersOnly;
+  }
+  
+  return longest;
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord };

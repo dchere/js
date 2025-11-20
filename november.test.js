@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -1165,5 +1165,54 @@ describe('buildMatrix - edge cases', () => {
 
     test('rectangular matrices - more rows than columns', () => {
         expect(buildMatrix(5, 2)).toEqual([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
+    });
+});
+
+describe('longestWord - basic tests', () => {
+    test('freecodecamp.org test cases', () => {
+        expect(longestWord("The quick red fox")).toBe("quick");
+        expect(longestWord("Hello coding challenge.")).toBe("challenge");
+        expect(longestWord("Do Try This At Home.")).toBe("This");
+        expect(longestWord("This sentence... has commas, ellipses, and an exlamation point!")).toBe("exlamation");
+        expect(longestWord("A tie? No way!")).toBe("tie");
+        expect(longestWord("Wouldn't you like to know.")).toBe("Wouldnt");
+    });
+
+    test('single word', () => {
+        expect(longestWord("Hello")).toBe("Hello");
+        expect(longestWord("World!")).toBe("World");
+    });
+
+    test('all same length - returns first', () => {
+        expect(longestWord("I am so ok")).toBe("am");
+        expect(longestWord("cat dog rat")).toBe("cat");
+    });
+});
+
+describe('longestWord - edge cases', () => {
+    test('words with punctuation removed', () => {
+        expect(longestWord("hello, world!")).toBe("hello");
+        expect(longestWord("what's happening?")).toBe("happening");
+        expect(longestWord("it's a beautiful day!!!")).toBe("beautiful");
+    });
+
+    test('words with numbers and special chars', () => {
+        expect(longestWord("test123 words456")).toBe("words");
+        expect(longestWord("@#$hello world$#@")).toBe("hello"); // both 5 letters, returns first
+    });
+
+    test('multiple punctuation marks', () => {
+        expect(longestWord("Wow!!! Really???")).toBe("Really");
+        expect(longestWord("can't won't shouldn't")).toBe("shouldnt");
+    });
+
+    test('case sensitivity preserved', () => {
+        expect(longestWord("ABC def GHI")).toBe("ABC");
+        expect(longestWord("JavaScript Python Ruby")).toBe("JavaScript");
+    });
+
+    test('words concatenated without spaces', () => {
+        expect(longestWord("one,two,three,four")).toBe("onetwothreefour"); // no spaces = one word
+        expect(longestWord("hello world")).toBe("hello"); // both 5 letters, returns first
     });
 });
