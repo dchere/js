@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -1214,5 +1214,97 @@ describe('longestWord - edge cases', () => {
     test('words concatenated without spaces', () => {
         expect(longestWord("one,two,three,four")).toBe("onetwothreefour"); // no spaces = one word
         expect(longestWord("hello world")).toBe("hello"); // both 5 letters, returns first
+    });
+});
+
+describe('lcm - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(lcm(4, 6)).toBe(12);
+        expect(lcm(9, 6)).toBe(18);
+        expect(lcm(10, 100)).toBe(100);
+        expect(lcm(13, 17)).toBe(221);
+        expect(lcm(45, 70)).toBe(630);
+    });
+
+    test('one number is multiple of the other', () => {
+        expect(lcm(2, 4)).toBe(4);
+        expect(lcm(3, 9)).toBe(9);
+        expect(lcm(5, 25)).toBe(25);
+        expect(lcm(7, 14)).toBe(14);
+    });
+
+    test('same numbers', () => {
+        expect(lcm(5, 5)).toBe(5);
+        expect(lcm(10, 10)).toBe(10);
+        expect(lcm(1, 1)).toBe(1);
+    });
+});
+
+describe('lcm - coprime numbers', () => {
+    test('prime numbers', () => {
+        expect(lcm(2, 3)).toBe(6);
+        expect(lcm(5, 7)).toBe(35);
+        expect(lcm(11, 13)).toBe(143);
+        expect(lcm(3, 5)).toBe(15);
+    });
+
+    test('coprime non-prime numbers', () => {
+        expect(lcm(8, 9)).toBe(72);
+        expect(lcm(14, 15)).toBe(210);
+        expect(lcm(21, 25)).toBe(525);
+    });
+});
+
+describe('lcm - with one', () => {
+    test('lcm with 1', () => {
+        expect(lcm(1, 5)).toBe(5);
+        expect(lcm(1, 100)).toBe(100);
+        expect(lcm(7, 1)).toBe(7);
+        expect(lcm(1, 1)).toBe(1);
+    });
+});
+
+describe('lcm - large numbers', () => {
+    test('larger values', () => {
+        expect(lcm(12, 18)).toBe(36);
+        expect(lcm(15, 25)).toBe(75);
+        expect(lcm(20, 30)).toBe(60);
+        expect(lcm(24, 36)).toBe(72);
+    });
+
+    test('very large numbers', () => {
+        expect(lcm(100, 150)).toBe(300);
+        expect(lcm(48, 180)).toBe(720);
+        expect(lcm(50, 75)).toBe(150);
+    });
+});
+
+describe('lcm - edge cases', () => {
+    test('order doesnt matter', () => {
+        expect(lcm(4, 6)).toBe(lcm(6, 4));
+        expect(lcm(10, 15)).toBe(lcm(15, 10));
+        expect(lcm(7, 21)).toBe(lcm(21, 7));
+    });
+
+    test('powers of same number', () => {
+        expect(lcm(2, 4)).toBe(4);
+        expect(lcm(4, 8)).toBe(8);
+        expect(lcm(3, 27)).toBe(27);
+        expect(lcm(5, 125)).toBe(125);
+    });
+});
+
+describe('lcm - common factors', () => {
+    test('numbers with common factors', () => {
+        expect(lcm(6, 8)).toBe(24);
+        expect(lcm(12, 15)).toBe(60);
+        expect(lcm(16, 20)).toBe(80);
+        expect(lcm(18, 24)).toBe(72);
+    });
+
+    test('multiple common factors', () => {
+        expect(lcm(12, 16)).toBe(48);
+        expect(lcm(20, 30)).toBe(60);
+        expect(lcm(24, 30)).toBe(120);
     });
 });
