@@ -32,9 +32,7 @@ function toCamelCase(s) {
   return camelCased.join('');
 }
 
-function sumOfSquares(n) {
-  return n * (n + 1) * (2 * n + 1) / 6;
-}
+const sumOfSquares = (n) => n * (n + 1) * (2 * n + 1) / 6;
 
 function fibonacciSequence(startSequence, length) {
 
@@ -221,11 +219,9 @@ function squaresWithThree(n) {
   return count;
 }
 
-function spaceJam(s) {
-  return s.replace(/ /g, '').toUpperCase().split('').join('  ');
-}
+const spaceJam = (s) => s.replace(/ /g, '').toUpperCase().split('').join('  ');
 
-function areAnagrams(str1, str2) {
+const areAnagrams = (str1, str2) => {
   const normalize = (s) => s.toLowerCase().replace(/ /g, '').split('').sort().join('');
   return normalize(str1) === normalize(str2);
 }

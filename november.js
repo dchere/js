@@ -15,14 +15,10 @@ function isMatch(fingerprintA, fingerprintB) {
     return differences <= fingerprintA.length;
 }
 
-function oneHundred(chars) {
-  return chars.repeat(Math.ceil(100/chars.length)).substring(0,100);
-}
+const oneHundred = (chars) => chars.repeat(Math.ceil(100/chars.length)).substring(0,100);
 
-function countRectangles(width, height) {
 
-  return 0.25 * width * (width + 1) * height * (height + 1);
-}
+const countRectangles = (width, height) => 0.25 * width * (width + 1) * height * (height + 1);
 
 /**
  * Calculates the sum of character values in a message.
@@ -137,10 +133,7 @@ function getExtension(filename) {
  * Searches for images matching a search term (case-insensitive).
  * Returns matching images in the same order as the input array.
  */
-function imageSearch(images, term) {
-  const lowerTerm = term.toLowerCase();
-  return images.filter(image => image.toLowerCase().includes(lowerTerm));
-}
+const imageSearch = (images, term) => images.filter(image => image.toLowerCase().includes(term.toLowerCase()));
 
 /**
  * Generates an email signature with prefix based on first letter of name.
@@ -257,13 +250,9 @@ function searchVertical(matrix, word) {
   return null;
 }
 
-function findWord(matrix, word) {
-  return searchHorizontal(matrix, word) ||
-         searchVertical(matrix, word) ||
-         null;
-}
-
-function countWords(sentence) {
+const findWord = (matrix, word) => searchHorizontal(matrix, word) || searchVertical(matrix, word);
+  
+const countWords = (sentence) => {
   if (sentence.length === 0) return 0;
   return sentence.split(' ').length;
 }
@@ -302,9 +291,12 @@ function longestWord(sentence) {
   return longest;
 }
 
-function lcm(a, b) {
-  const gcdValue = gcd(a, b);
-  return Math.abs(a * b) / gcdValue;
-}
+const lcm = (a, b) => a * b / gcd(a, b);
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm };
+const scaleRecipe = (ingredients, scale) => ingredients.map((item) => {
+    const i0 = item.indexOf(' ');
+    const scaledQuantity = parseFloat(item.slice(0, i0)) * scale;
+    return scaledQuantity.toString() + ' ' + item.slice(i0 + 1);
+  });
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe };

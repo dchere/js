@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -1306,5 +1306,153 @@ describe('lcm - common factors', () => {
         expect(lcm(12, 16)).toBe(48);
         expect(lcm(20, 30)).toBe(60);
         expect(lcm(24, 30)).toBe(120);
+    });
+});
+
+describe('scaleRecipe - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(scaleRecipe(["2 C Flour", "1.5 T Sugar"], 2))
+            .toEqual(["4 C Flour", "3 T Sugar"]);
+        expect(scaleRecipe(["4 T Flour", "1 C Milk", "2 T Oil"], 1.5))
+            .toEqual(["6 T Flour", "1.5 C Milk", "3 T Oil"]);
+        expect(scaleRecipe(["3 C Milk", "2 C Oats"], 0.5))
+            .toEqual(["1.5 C Milk", "1 C Oats"]);
+    });
+
+    test('complex recipe scaling', () => {
+        expect(scaleRecipe([
+            "2 C All-purpose Flour",
+            "1 t Baking Soda",
+            "1 t Salt",
+            "1 C Butter",
+            "0.5 C Sugar",
+            "0.5 C Brown Sugar",
+            "1 t Vanilla Extract",
+            "2 C Chocolate Chips"
+        ], 2.5)).toEqual([
+            "5 C All-purpose Flour",
+            "2.5 t Baking Soda",
+            "2.5 t Salt",
+            "2.5 C Butter",
+            "1.25 C Sugar",
+            "1.25 C Brown Sugar",
+            "2.5 t Vanilla Extract",
+            "5 C Chocolate Chips"
+        ]);
+    });
+});
+
+describe('scaleRecipe - scaling by 1', () => {
+    test('no change when scaled by 1', () => {
+        expect(scaleRecipe(["2 C Flour"], 1)).toEqual(["2 C Flour"]);
+        expect(scaleRecipe(["3.5 T Sugar", "1 C Milk"], 1))
+            .toEqual(["3.5 T Sugar", "1 C Milk"]);
+    });
+});
+
+describe('scaleRecipe - scaling up', () => {
+    test('double recipe', () => {
+        expect(scaleRecipe(["1 C Flour", "2 T Sugar"], 2))
+            .toEqual(["2 C Flour", "4 T Sugar"]);
+        expect(scaleRecipe(["0.5 C Oil"], 2)).toEqual(["1 C Oil"]);
+    });
+
+    test('triple recipe', () => {
+        expect(scaleRecipe(["1 C Flour"], 3)).toEqual(["3 C Flour"]);
+        expect(scaleRecipe(["2 T Salt", "1.5 C Water"], 3))
+            .toEqual(["6 T Salt", "4.5 C Water"]);
+    });
+
+    test('scale by fractional amount', () => {
+        expect(scaleRecipe(["2 C Flour"], 1.5)).toEqual(["3 C Flour"]);
+        expect(scaleRecipe(["4 T Sugar"], 2.5)).toEqual(["10 T Sugar"]);
+    });
+});
+
+describe('scaleRecipe - scaling down', () => {
+    test('half recipe', () => {
+        expect(scaleRecipe(["2 C Flour", "4 T Sugar"], 0.5))
+            .toEqual(["1 C Flour", "2 T Sugar"]);
+        expect(scaleRecipe(["6 C Milk"], 0.5)).toEqual(["3 C Milk"]);
+    });
+
+    test('quarter recipe', () => {
+        expect(scaleRecipe(["4 C Flour"], 0.25)).toEqual(["1 C Flour"]);
+        expect(scaleRecipe(["8 T Salt"], 0.25)).toEqual(["2 T Salt"]);
+    });
+
+    test('scale down with decimals', () => {
+        expect(scaleRecipe(["3 C Flour"], 0.5)).toEqual(["1.5 C Flour"]);
+        expect(scaleRecipe(["5 T Sugar"], 0.5)).toEqual(["2.5 T Sugar"]);
+    });
+});
+
+describe('scaleRecipe - decimal quantities', () => {
+    test('decimal starting quantities', () => {
+        expect(scaleRecipe(["0.5 C Sugar"], 2)).toEqual(["1 C Sugar"]);
+        expect(scaleRecipe(["1.5 T Salt"], 2)).toEqual(["3 T Salt"]);
+        expect(scaleRecipe(["2.5 C Flour"], 2)).toEqual(["5 C Flour"]);
+    });
+
+    test('decimal results without trailing zeros', () => {
+        expect(scaleRecipe(["1 C Flour"], 1.5)).toEqual(["1.5 C Flour"]);
+        expect(scaleRecipe(["2 T Sugar"], 0.75)).toEqual(["1.5 T Sugar"]);
+    });
+
+    test('whole number results', () => {
+        expect(scaleRecipe(["0.5 C Oil"], 4)).toEqual(["2 C Oil"]);
+        expect(scaleRecipe(["1.5 C Water"], 2)).toEqual(["3 C Water"]);
+    });
+});
+
+describe('scaleRecipe - different units', () => {
+    test('various unit types', () => {
+        expect(scaleRecipe(["1 C Flour"], 2)).toEqual(["2 C Flour"]);
+        expect(scaleRecipe(["1 T Salt"], 2)).toEqual(["2 T Salt"]);
+        expect(scaleRecipe(["1 t Vanilla"], 2)).toEqual(["2 t Vanilla"]);
+        expect(scaleRecipe(["1 oz Chocolate"], 2))
+            .toEqual(["2 oz Chocolate"]);
+    });
+
+    test('units are preserved', () => {
+        expect(scaleRecipe(["2 cups Sugar"], 1.5))
+            .toEqual(["3 cups Sugar"]);
+        expect(scaleRecipe(["4 tablespoons Oil"], 0.5))
+            .toEqual(["2 tablespoons Oil"]);
+    });
+});
+
+describe('scaleRecipe - multi-word ingredients', () => {
+    test('ingredients with multiple words', () => {
+        expect(scaleRecipe(["2 C All-purpose Flour"], 2))
+            .toEqual(["4 C All-purpose Flour"]);
+        expect(scaleRecipe(["1 T Vanilla Extract"], 3))
+            .toEqual(["3 T Vanilla Extract"]);
+    });
+
+    test('complex ingredient names', () => {
+        expect(scaleRecipe(["0.5 C Brown Sugar"], 2))
+            .toEqual(["1 C Brown Sugar"]);
+        expect(scaleRecipe(["1.5 C Semi-sweet Chocolate Chips"], 2))
+            .toEqual(["3 C Semi-sweet Chocolate Chips"]);
+    });
+});
+
+describe('scaleRecipe - edge cases', () => {
+    test('empty array', () => {
+        expect(scaleRecipe([], 2)).toEqual([]);
+    });
+
+    test('single ingredient', () => {
+        expect(scaleRecipe(["1 C Flour"], 2)).toEqual(["2 C Flour"]);
+    });
+
+    test('order is preserved', () => {
+        const input = ["1 C A", "2 T B", "3 C C"];
+        const output = scaleRecipe(input, 2);
+        expect(output).toEqual(["2 C A", "4 T B", "6 C C"]);
+        expect(output[0]).toBe("2 C A");
+        expect(output[1]).toBe("4 T B");
+        expect(output[2]).toBe("6 C C");
     });
 });
