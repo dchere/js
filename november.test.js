@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -1454,5 +1454,146 @@ describe('scaleRecipe - edge cases', () => {
         expect(output[0]).toBe("2 C A");
         expect(output[1]).toBe("4 T B");
         expect(output[2]).toBe("6 C C");
+    });
+});
+
+describe('countCharacters - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(countCharacters("hello world"))
+            .toEqual(["d 1", "e 1", "h 1", "l 3", "o 2", "r 1", "w 1"]);
+        expect(countCharacters("I love coding challenges!"))
+            .toEqual(["a 1", "c 2", "d 1", "e 3", "g 2", "h 1",
+                "i 2", "l 3", "n 2", "o 2", "s 1", "v 1"]);
+        expect(countCharacters("// TODO: Complete this challenge ASAP!"))
+            .toEqual(["a 3", "c 2", "d 1", "e 4", "g 1", "h 2",
+                "i 1", "l 3", "m 1", "n 1", "o 3", "p 2", "s 2", "t 3"]);
+    });
+
+    test('simple words', () => {
+        expect(countCharacters("hello")).toEqual(["e 1", "h 1", "l 2", "o 1"]);
+        expect(countCharacters("world")).toEqual(["d 1", "l 1", "o 1", "r 1", "w 1"]);
+    });
+});
+
+describe('countCharacters - case sensitivity', () => {
+    test('uppercase letters', () => {
+        expect(countCharacters("HELLO"))
+            .toEqual(["e 1", "h 1", "l 2", "o 1"]);
+        expect(countCharacters("WORLD"))
+            .toEqual(["d 1", "l 1", "o 1", "r 1", "w 1"]);
+    });
+
+    test('mixed case treated as same', () => {
+        expect(countCharacters("AaBbCc")).toEqual(["a 2", "b 2", "c 2"]);
+        expect(countCharacters("HeLLo WoRLd"))
+            .toEqual(["d 1", "e 1", "h 1", "l 3", "o 2", "r 1", "w 1"]);
+    });
+
+    test('all returned letters are lowercase', () => {
+        const result = countCharacters("ABC");
+        expect(result).toEqual(["a 1", "b 1", "c 1"]);
+        result.forEach((item) => {
+            const letter = item.split(' ')[0];
+            expect(letter).toBe(letter.toLowerCase());
+        });
+    });
+});
+
+describe('countCharacters - ignoring non-letters', () => {
+    test('ignore numbers', () => {
+        expect(countCharacters("abc123"))
+            .toEqual(["a 1", "b 1", "c 1"]);
+        expect(countCharacters("test 123 test"))
+            .toEqual(["e 2", "s 2", "t 4"]);
+    });
+
+    test('ignore spaces', () => {
+        expect(countCharacters("a b c"))
+            .toEqual(["a 1", "b 1", "c 1"]);
+        expect(countCharacters("   hello   "))
+            .toEqual(["e 1", "h 1", "l 2", "o 1"]);
+    });
+
+    test('ignore punctuation', () => {
+        expect(countCharacters("hello!"))
+            .toEqual(["e 1", "h 1", "l 2", "o 1"]);
+        expect(countCharacters("hello, world!"))
+            .toEqual(["d 1", "e 1", "h 1", "l 3", "o 2", "r 1", "w 1"]);
+    });
+
+    test('ignore special characters', () => {
+        expect(countCharacters("@#$%abc"))
+            .toEqual(["a 1", "b 1", "c 1"]);
+        expect(countCharacters("test@email.com"))
+            .toEqual(["a 1", "c 1", "e 2", "i 1", "l 1", "m 2", "o 1", "s 1", "t 2"]);
+    });
+});
+
+describe('countCharacters - alphabetical order', () => {
+    test('results sorted alphabetically', () => {
+        expect(countCharacters("zyx"))
+            .toEqual(["x 1", "y 1", "z 1"]);
+        expect(countCharacters("dcba"))
+            .toEqual(["a 1", "b 1", "c 1", "d 1"]);
+    });
+
+    test('mixed order input gives sorted output', () => {
+        expect(countCharacters("zebra"))
+            .toEqual(["a 1", "b 1", "e 1", "r 1", "z 1"]);
+        expect(countCharacters("programming"))
+            .toEqual(["a 1", "g 2", "i 1", "m 2", "n 1", "o 1", "p 1", "r 2"]);
+    });
+});
+
+describe('countCharacters - character counts', () => {
+    test('single occurrence', () => {
+        expect(countCharacters("abc")).toEqual(["a 1", "b 1", "c 1"]);
+        expect(countCharacters("abcdefg"))
+            .toEqual(["a 1", "b 1", "c 1", "d 1", "e 1", "f 1", "g 1"]);
+    });
+
+    test('multiple occurrences', () => {
+        expect(countCharacters("aaa")).toEqual(["a 3"]);
+        expect(countCharacters("aabbcc"))
+            .toEqual(["a 2", "b 2", "c 2"]);
+        expect(countCharacters("mississippi"))
+            .toEqual(["i 4", "m 1", "p 2", "s 4"]);
+    });
+
+    test('varying counts', () => {
+        expect(countCharacters("aaabbc"))
+            .toEqual(["a 3", "b 2", "c 1"]);
+        expect(countCharacters("bookkeeper"))
+            .toEqual(["b 1", "e 3", "k 2", "o 2", "p 1", "r 1"]);
+    });
+});
+
+describe('countCharacters - edge cases', () => {
+    test('empty string', () => {
+        expect(countCharacters("")).toEqual([]);
+    });
+
+    test('only non-letter characters', () => {
+        expect(countCharacters("123!@#")).toEqual([]);
+        expect(countCharacters("   ")).toEqual([]);
+        expect(countCharacters("!@#$%^&*()")).toEqual([]);
+    });
+
+    test('single letter', () => {
+        expect(countCharacters("a")).toEqual(["a 1"]);
+        expect(countCharacters("Z")).toEqual(["z 1"]);
+    });
+
+    test('all alphabet letters', () => {
+        const result = countCharacters("abcdefghijklmnopqrstuvwxyz");
+        expect(result.length).toBe(26);
+        expect(result[0]).toBe("a 1");
+        expect(result[25]).toBe("z 1");
+    });
+
+    test('only letters not in string are excluded', () => {
+        expect(countCharacters("ace")).toEqual(["a 1", "c 1", "e 1"]);
+        expect(countCharacters("ace")).not.toContain("b 0");
+        expect(countCharacters("ace")).not.toContain("d 0");
     });
 });

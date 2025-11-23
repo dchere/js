@@ -299,4 +299,16 @@ const scaleRecipe = (ingredients, scale) => ingredients.map((item) => {
     return scaledQuantity.toString() + ' ' + item.slice(i0 + 1);
   });
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe };
+function countCharacters(sentence) {
+  const counts = {};
+  for (const char of sentence.toLowerCase()) {
+    if (char >= 'a' && char <= 'z') {
+      counts[char] = (counts[char] || 0) + 1;
+    }
+  }
+  return Object.keys(counts).sort().map((char) => {
+    return char + ' ' + counts[char];
+  });
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters };
