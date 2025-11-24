@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -1595,5 +1595,151 @@ describe('countCharacters - edge cases', () => {
         expect(countCharacters("ace")).toEqual(["a 1", "c 1", "e 1"]);
         expect(countCharacters("ace")).not.toContain("b 0");
         expect(countCharacters("ace")).not.toContain("d 0");
+    });
+});
+
+describe('isValidMessage - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(isValidMessage("hello world", "hw")).toBe(true);
+        expect(isValidMessage("ALL CAPITAL LETTERS", "acl")).toBe(true);
+        expect(isValidMessage("Coding challenge are boring.", "cca"))
+            .toBe(false);
+        expect(isValidMessage(
+            "The quick brown fox jumps over the lazy dog.",
+            "TQBFJOTLD"
+        )).toBe(true);
+        expect(isValidMessage(
+            "The quick brown fox jumps over the lazy dog.",
+            "TQBFJOTLDT"
+        )).toBe(false);
+    });
+
+    test('simple valid messages', () => {
+        expect(isValidMessage("hello world", "hw")).toBe(true);
+        expect(isValidMessage("abc def", "ad")).toBe(true);
+        expect(isValidMessage("test message", "tm")).toBe(true);
+    });
+
+    test('simple invalid messages', () => {
+        expect(isValidMessage("hello world", "ab")).toBe(false);
+        expect(isValidMessage("test message", "ab")).toBe(false);
+    });
+});
+
+describe('isValidMessage - case insensitivity', () => {
+    test('lowercase message and lowercase validator', () => {
+        expect(isValidMessage("hello world", "hw")).toBe(true);
+        expect(isValidMessage("coding challenge", "cc")).toBe(true);
+    });
+
+    test('uppercase message and lowercase validator', () => {
+        expect(isValidMessage("HELLO WORLD", "hw")).toBe(true);
+        expect(isValidMessage("ALL CAPS", "ac")).toBe(true);
+    });
+
+    test('lowercase message and uppercase validator', () => {
+        expect(isValidMessage("hello world", "HW")).toBe(true);
+        expect(isValidMessage("test message", "TM")).toBe(true);
+    });
+
+    test('mixed case in both', () => {
+        expect(isValidMessage("Hello World", "hW")).toBe(true);
+        expect(isValidMessage("TeSt MeSsAgE", "Tm")).toBe(true);
+    });
+});
+
+describe('isValidMessage - length mismatch', () => {
+    test('validator too short', () => {
+        expect(isValidMessage("hello world test", "hw")).toBe(false);
+        expect(isValidMessage("one two three", "ot")).toBe(false);
+    });
+
+    test('validator too long', () => {
+        expect(isValidMessage("hello world", "hwt")).toBe(false);
+        expect(isValidMessage("one two", "otf")).toBe(false);
+    });
+
+    test('correct length matches', () => {
+        expect(isValidMessage("a b c", "abc")).toBe(true);
+        expect(isValidMessage("one two three", "ott")).toBe(true);
+    });
+});
+
+describe('isValidMessage - first letter matching', () => {
+    test('correct first letters', () => {
+        expect(isValidMessage("apple banana", "ab")).toBe(true);
+        expect(isValidMessage("cat dog elephant", "cde")).toBe(true);
+    });
+
+    test('incorrect first letters', () => {
+        expect(isValidMessage("apple banana", "ba")).toBe(false);
+        expect(isValidMessage("cat dog elephant", "xyz")).toBe(false);
+    });
+
+    test('partial match not enough', () => {
+        expect(isValidMessage("apple banana cherry", "abc")).toBe(true);
+        expect(isValidMessage("apple banana cherry", "abd")).toBe(false);
+    });
+});
+
+describe('isValidMessage - single word', () => {
+    test('valid single word', () => {
+        expect(isValidMessage("hello", "h")).toBe(true);
+        expect(isValidMessage("world", "w")).toBe(true);
+    });
+
+    test('invalid single word', () => {
+        expect(isValidMessage("hello", "w")).toBe(false);
+        expect(isValidMessage("world", "h")).toBe(false);
+    });
+
+    test('single word with wrong length validator', () => {
+        expect(isValidMessage("hello", "hw")).toBe(false);
+        expect(isValidMessage("test", "")).toBe(false);
+    });
+});
+
+describe('isValidMessage - multiple words', () => {
+    test('long valid message', () => {
+        expect(isValidMessage("a b c d e f", "abcdef")).toBe(true);
+        expect(isValidMessage(
+            "one two three four five",
+            "ottff"
+        )).toBe(true);
+    });
+
+    test('long invalid message', () => {
+        expect(isValidMessage("a b c d e f", "xbcdef")).toBe(false);
+        expect(isValidMessage("one two three four five", "otxff"))
+            .toBe(false);
+    });
+});
+
+describe('isValidMessage - edge cases', () => {
+    test('empty message and validator', () => {
+        expect(isValidMessage("", "")).toBe(true);
+    });
+
+    test('single character words', () => {
+        expect(isValidMessage("a b c", "abc")).toBe(true);
+        expect(isValidMessage("I am ok", "iao")).toBe(true);
+    });
+
+    test('order matters', () => {
+        expect(isValidMessage("hello world", "hw")).toBe(true);
+        expect(isValidMessage("world hello", "hw")).toBe(false);
+        expect(isValidMessage("world hello", "wh")).toBe(true);
+    });
+
+    test('repeated letters', () => {
+        expect(isValidMessage("apple apple", "aa")).toBe(true);
+        expect(isValidMessage("test test test", "ttt")).toBe(true);
+    });
+
+    test('different words same first letter', () => {
+        expect(isValidMessage("apple apricot avocado", "aaa"))
+            .toBe(true);
+        expect(isValidMessage("banana berry blueberry", "bbb"))
+            .toBe(true);
     });
 });

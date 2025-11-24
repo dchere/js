@@ -311,4 +311,20 @@ function countCharacters(sentence) {
   });
 }
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters };
+function isValidMessage(message, validator) {
+  if (message === '' && validator === '') {
+    return true;
+  }
+  const words = message.split(' ');
+  if (words.length !== validator.length) {
+    return false;
+  }
+  for (let i = 0; i < words.length; i++) {
+    if (words[i][0].toLowerCase() !== validator[i].toLowerCase()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage };
