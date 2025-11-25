@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -1741,5 +1741,171 @@ describe('isValidMessage - edge cases', () => {
             .toBe(true);
         expect(isValidMessage("banana berry blueberry", "bbb"))
             .toBe(true);
+    });
+});
+
+describe('fizzBuzz - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(fizzBuzz(2)).toEqual([1, 2]);
+        expect(fizzBuzz(4)).toEqual([1, 2, "Fizz", 4]);
+        expect(fizzBuzz(8))
+            .toEqual([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8]);
+        expect(fizzBuzz(20)).toEqual([1, 2, "Fizz", 4, "Buzz", "Fizz",
+            7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz", 16,
+            17, "Fizz", 19, "Buzz"]);
+    });
+
+    test('fizzBuzz(50) complete test', () => {
+        expect(fizzBuzz(50)).toEqual([1, 2, "Fizz", 4, "Buzz", "Fizz",
+            7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz", 16,
+            17, "Fizz", 19, "Buzz", "Fizz", 22, 23, "Fizz", "Buzz",
+            26, "Fizz", 28, 29, "FizzBuzz", 31, 32, "Fizz", 34, "Buzz",
+            "Fizz", 37, 38, "Fizz", "Buzz", 41, "Fizz", 43, 44,
+            "FizzBuzz", 46, 47, "Fizz", 49, "Buzz"]);
+    });
+});
+
+describe('fizzBuzz - small numbers', () => {
+    test('n = 1', () => {
+        expect(fizzBuzz(1)).toEqual([1]);
+    });
+
+    test('n = 3 (first Fizz)', () => {
+        expect(fizzBuzz(3)).toEqual([1, 2, "Fizz"]);
+    });
+
+    test('n = 5 (first Buzz)', () => {
+        expect(fizzBuzz(5)).toEqual([1, 2, "Fizz", 4, "Buzz"]);
+    });
+
+    test('n = 15 (first FizzBuzz)', () => {
+        expect(fizzBuzz(15)).toEqual([1, 2, "Fizz", 4, "Buzz", "Fizz",
+            7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]);
+    });
+});
+
+describe('fizzBuzz - Fizz pattern', () => {
+    test('multiples of 3', () => {
+        const result = fizzBuzz(12);
+        expect(result[2]).toBe("Fizz");
+        expect(result[5]).toBe("Fizz");
+        expect(result[8]).toBe("Fizz");
+        expect(result[11]).toBe("Fizz");
+    });
+
+    test('3, 6, 9, 12 are Fizz', () => {
+        expect(fizzBuzz(12)[2]).toBe("Fizz");
+        expect(fizzBuzz(12)[5]).toBe("Fizz");
+        expect(fizzBuzz(12)[8]).toBe("Fizz");
+        expect(fizzBuzz(12)[11]).toBe("Fizz");
+    });
+});
+
+describe('fizzBuzz - Buzz pattern', () => {
+    test('multiples of 5', () => {
+        const result = fizzBuzz(25);
+        expect(result[4]).toBe("Buzz");
+        expect(result[9]).toBe("Buzz");
+        expect(result[19]).toBe("Buzz");
+    });
+
+    test('5, 10, 20, 25 are Buzz (not FizzBuzz)', () => {
+        expect(fizzBuzz(25)[4]).toBe("Buzz");
+        expect(fizzBuzz(25)[9]).toBe("Buzz");
+        expect(fizzBuzz(25)[19]).toBe("Buzz");
+        expect(fizzBuzz(25)[24]).toBe("Buzz");
+    });
+});
+
+describe('fizzBuzz - FizzBuzz pattern', () => {
+    test('multiples of 15', () => {
+        const result = fizzBuzz(45);
+        expect(result[14]).toBe("FizzBuzz");
+        expect(result[29]).toBe("FizzBuzz");
+        expect(result[44]).toBe("FizzBuzz");
+    });
+
+    test('15, 30, 45 are FizzBuzz', () => {
+        expect(fizzBuzz(45)[14]).toBe("FizzBuzz");
+        expect(fizzBuzz(45)[29]).toBe("FizzBuzz");
+        expect(fizzBuzz(45)[44]).toBe("FizzBuzz");
+    });
+
+    test('FizzBuzz takes precedence over Fizz and Buzz', () => {
+        const result = fizzBuzz(15);
+        expect(result[14]).toBe("FizzBuzz");
+        expect(result[14]).not.toBe("Fizz");
+        expect(result[14]).not.toBe("Buzz");
+    });
+});
+
+describe('fizzBuzz - regular numbers', () => {
+    test('non-multiples remain as numbers', () => {
+        const result = fizzBuzz(10);
+        expect(result[0]).toBe(1);
+        expect(result[1]).toBe(2);
+        expect(result[3]).toBe(4);
+        expect(result[6]).toBe(7);
+        expect(result[7]).toBe(8);
+    });
+
+    test('1, 2, 4, 7, 8, 11 are numbers', () => {
+        expect(fizzBuzz(12)[0]).toBe(1);
+        expect(fizzBuzz(12)[1]).toBe(2);
+        expect(fizzBuzz(12)[3]).toBe(4);
+        expect(fizzBuzz(12)[6]).toBe(7);
+        expect(fizzBuzz(12)[7]).toBe(8);
+        expect(fizzBuzz(12)[10]).toBe(11);
+    });
+});
+
+describe('fizzBuzz - array properties', () => {
+    test('array length equals n', () => {
+        expect(fizzBuzz(5).length).toBe(5);
+        expect(fizzBuzz(10).length).toBe(10);
+        expect(fizzBuzz(20).length).toBe(20);
+        expect(fizzBuzz(100).length).toBe(100);
+    });
+
+    test('first element is always 1', () => {
+        expect(fizzBuzz(1)[0]).toBe(1);
+        expect(fizzBuzz(10)[0]).toBe(1);
+        expect(fizzBuzz(50)[0]).toBe(1);
+    });
+
+    test('last element depends on n', () => {
+        expect(fizzBuzz(2)[1]).toBe(2);
+        expect(fizzBuzz(5)[4]).toBe("Buzz");
+        expect(fizzBuzz(15)[14]).toBe("FizzBuzz");
+    });
+});
+
+describe('fizzBuzz - larger numbers', () => {
+    test('n = 30', () => {
+        const result = fizzBuzz(30);
+        expect(result.length).toBe(30);
+        expect(result[14]).toBe("FizzBuzz");
+        expect(result[29]).toBe("FizzBuzz");
+    });
+
+    test('n = 100 has correct structure', () => {
+        const result = fizzBuzz(100);
+        expect(result.length).toBe(100);
+        expect(result[14]).toBe("FizzBuzz");
+        expect(result[29]).toBe("FizzBuzz");
+        expect(result[44]).toBe("FizzBuzz");
+        expect(result[59]).toBe("FizzBuzz");
+        expect(result[74]).toBe("FizzBuzz");
+        expect(result[89]).toBe("FizzBuzz");
+    });
+
+    test('counts in range', () => {
+        const result = fizzBuzz(100);
+        const fizzes = result.filter((x) => x === "Fizz").length;
+        const buzzes = result.filter((x) => x === "Buzz").length;
+        const fizzBuzzes = result.filter((x) => x === "FizzBuzz").length;
+        expect(fizzBuzzes).toBe(6);
+        expect(fizzes).toBe(27);
+        expect(buzzes).toBe(14);
     });
 });
