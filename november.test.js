@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -1907,5 +1907,175 @@ describe('fizzBuzz - larger numbers', () => {
         expect(fizzBuzzes).toBe(6);
         expect(fizzes).toBe(27);
         expect(buzzes).toBe(14);
+    });
+});
+
+describe('isFizzBuzz - basic tests', () => {
+    test('freeCodeCamp test cases - valid', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4])).toBe(true);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz", 16, 17,
+            "Fizz", 19, "Buzz", "Fizz", 22, 23, "Fizz", "Buzz", 26,
+            "Fizz", 28, 29, "FizzBuzz", 31, 32, "Fizz", 34, "Buzz",
+            "Fizz", 37, 38, "Fizz", "Buzz", 41, "Fizz", 43, 44,
+            "FizzBuzz", 46, 47, "Fizz", 49, "Buzz"])).toBe(true);
+    });
+
+    test('freeCodeCamp test cases - invalid', () => {
+        expect(isFizzBuzz([1, 2, 3, 4])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", 7])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, "FizzBuzz"])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, "Fizz"])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, "Buzz"])).toBe(false);
+    });
+});
+
+describe('isFizzBuzz - correct sequences', () => {
+    test('small valid sequences', () => {
+        expect(isFizzBuzz([1])).toBe(true);
+        expect(isFizzBuzz([1, 2])).toBe(true);
+        expect(isFizzBuzz([1, 2, "Fizz"])).toBe(true);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz"])).toBe(true);
+    });
+
+    test('sequence up to first FizzBuzz', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"])).toBe(true);
+    });
+
+    test('valid sequence to 20', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz", 16, 17,
+            "Fizz", 19, "Buzz"])).toBe(true);
+    });
+});
+
+describe('isFizzBuzz - incorrect replacements', () => {
+    test('number instead of Fizz', () => {
+        expect(isFizzBuzz([1, 2, 3])).toBe(false);
+        expect(isFizzBuzz([1, 2, 3, 4])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", 6])).toBe(false);
+    });
+
+    test('number instead of Buzz', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, 5])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", 10])).toBe(false);
+    });
+
+    test('number instead of FizzBuzz', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, 15])).toBe(false);
+    });
+
+    test('wrong replacement type', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, "Buzz"])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, "Fizz"])).toBe(false);
+    });
+});
+
+describe('isFizzBuzz - wrong starting point', () => {
+    test('does not start at 1', () => {
+        expect(isFizzBuzz([0, 1, 2])).toBe(false);
+        expect(isFizzBuzz([2, "Fizz", 4])).toBe(false);
+        expect(isFizzBuzz([5, "Buzz", 7])).toBe(false);
+    });
+
+    test('starts with wrong value', () => {
+        expect(isFizzBuzz([2])).toBe(false);
+        expect(isFizzBuzz(["Fizz"])).toBe(false);
+    });
+});
+
+describe('isFizzBuzz - missing elements', () => {
+    test('skipped numbers', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", 7]))
+            .toBe(false);
+        expect(isFizzBuzz([1, "Fizz", 4])).toBe(false);
+    });
+
+    test('incomplete sequence', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, "FizzBuzz"]))
+            .toBe(false);
+    });
+});
+
+describe('isFizzBuzz - edge cases', () => {
+    test('empty array', () => {
+        expect(isFizzBuzz([])).toBe(false);
+    });
+
+    test('null or undefined', () => {
+        expect(isFizzBuzz(null)).toBe(false);
+        expect(isFizzBuzz(undefined)).toBe(false);
+    });
+
+    test('single element valid', () => {
+        expect(isFizzBuzz([1])).toBe(true);
+    });
+
+    test('single element invalid', () => {
+        expect(isFizzBuzz([2])).toBe(false);
+        expect(isFizzBuzz([0])).toBe(false);
+    });
+});
+
+describe('isFizzBuzz - Fizz validation', () => {
+    test('correct Fizz at position 3', () => {
+        expect(isFizzBuzz([1, 2, "Fizz"])).toBe(true);
+    });
+
+    test('incorrect Fizz positions', () => {
+        expect(isFizzBuzz([1, "Fizz", "Fizz"])).toBe(false);
+        expect(isFizzBuzz(["Fizz", 2, "Fizz"])).toBe(false);
+    });
+
+    test('all Fizz positions correct', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz"])).toBe(true);
+    });
+});
+
+describe('isFizzBuzz - Buzz validation', () => {
+    test('correct Buzz at position 5', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz"])).toBe(true);
+    });
+
+    test('incorrect Buzz positions', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", "Buzz"])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, 5, "Buzz"])).toBe(false);
+    });
+
+    test('all Buzz positions correct', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz"])).toBe(true);
+    });
+});
+
+describe('isFizzBuzz - FizzBuzz validation', () => {
+    test('correct FizzBuzz at position 15', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]))
+            .toBe(true);
+    });
+
+    test('FizzBuzz instead of Fizz or Buzz at 15', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, "Fizz"])).toBe(false);
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, "Buzz"])).toBe(false);
+    });
+
+    test('multiple FizzBuzz positions', () => {
+        expect(isFizzBuzz([1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8,
+            "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz", 16, 17,
+            "Fizz", 19, "Buzz", "Fizz", 22, 23, "Fizz", "Buzz", 26,
+            "Fizz", 28, 29, "FizzBuzz"])).toBe(true);
     });
 });

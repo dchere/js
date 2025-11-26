@@ -343,4 +343,20 @@ function fizzBuzz(n) {
   return result;
 }
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz };
+function isFizzBuzz(sequence) {
+  if (!sequence || sequence.length === 0) {
+    return false;
+  }
+  for (let i = 0; i < sequence.length; i++) {
+    const num = i + 1;
+    const expected = num % 15 === 0 ? 'FizzBuzz' :
+                     num % 3 === 0 ? 'Fizz' :
+                     num % 5 === 0 ? 'Buzz' : num;
+    if (sequence[i] !== expected) {
+      return false;
+    }
+  }
+  return true;
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz };
