@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -2077,5 +2077,149 @@ describe('isFizzBuzz - FizzBuzz validation', () => {
             "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz", 16, 17,
             "Fizz", 19, "Buzz", "Fizz", 22, 23, "Fizz", "Buzz", 26,
             "Fizz", 28, 29, "FizzBuzz"])).toBe(true);
+    });
+});
+
+describe('calculateAge - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(calculateAge("2000-11-20")).toBe(25);
+        expect(calculateAge("2000-12-01")).toBe(24);
+        expect(calculateAge("2014-10-25")).toBe(11);
+        expect(calculateAge("1994-01-06")).toBe(31);
+        expect(calculateAge("1994-12-14")).toBe(30);
+    });
+});
+
+describe('calculateAge - birthday before Nov 27', () => {
+    test('birthday already happened in 2025', () => {
+        expect(calculateAge("2000-01-01")).toBe(25);
+        expect(calculateAge("2000-06-15")).toBe(25);
+        expect(calculateAge("2000-11-27")).toBe(25);
+    });
+
+    test('early in the year', () => {
+        expect(calculateAge("1990-01-01")).toBe(35);
+        expect(calculateAge("1995-02-14")).toBe(30);
+        expect(calculateAge("2010-03-20")).toBe(15);
+    });
+
+    test('summer birthdays', () => {
+        expect(calculateAge("2000-06-01")).toBe(25);
+        expect(calculateAge("2000-07-15")).toBe(25);
+        expect(calculateAge("2000-08-31")).toBe(25);
+    });
+});
+
+describe('calculateAge - birthday after Nov 27', () => {
+    test('birthday has not happened yet in 2025', () => {
+        expect(calculateAge("2000-11-28")).toBe(24);
+        expect(calculateAge("2000-12-01")).toBe(24);
+        expect(calculateAge("2000-12-31")).toBe(24);
+    });
+
+    test('December birthdays', () => {
+        expect(calculateAge("1990-12-01")).toBe(34);
+        expect(calculateAge("1995-12-15")).toBe(29);
+        expect(calculateAge("2010-12-25")).toBe(14);
+    });
+
+    test('late November birthdays', () => {
+        expect(calculateAge("2000-11-28")).toBe(24);
+        expect(calculateAge("2000-11-29")).toBe(24);
+        expect(calculateAge("2000-11-30")).toBe(24);
+    });
+});
+
+describe('calculateAge - exact date Nov 27', () => {
+    test('born on Nov 27', () => {
+        expect(calculateAge("2000-11-27")).toBe(25);
+        expect(calculateAge("1990-11-27")).toBe(35);
+        expect(calculateAge("2010-11-27")).toBe(15);
+    });
+
+    test('birthday is today', () => {
+        expect(calculateAge("2000-11-27")).toBe(25);
+        expect(calculateAge("1995-11-27")).toBe(30);
+    });
+});
+
+describe('calculateAge - different birth years', () => {
+    test('born in 2000s', () => {
+        expect(calculateAge("2000-01-01")).toBe(25);
+        expect(calculateAge("2005-06-15")).toBe(20);
+        expect(calculateAge("2010-09-20")).toBe(15);
+    });
+
+    test('born in 1990s', () => {
+        expect(calculateAge("1990-01-01")).toBe(35);
+        expect(calculateAge("1995-06-15")).toBe(30);
+        expect(calculateAge("1999-12-31")).toBe(25);
+    });
+
+    test('born in 1980s', () => {
+        expect(calculateAge("1980-01-01")).toBe(45);
+        expect(calculateAge("1985-06-15")).toBe(40);
+        expect(calculateAge("1989-12-31")).toBe(35);
+    });
+});
+
+describe('calculateAge - young ages', () => {
+    test('teenagers', () => {
+        expect(calculateAge("2010-01-01")).toBe(15);
+        expect(calculateAge("2012-06-15")).toBe(13);
+        expect(calculateAge("2015-09-20")).toBe(10);
+    });
+
+    test('children', () => {
+        expect(calculateAge("2020-01-01")).toBe(5);
+        expect(calculateAge("2022-06-15")).toBe(3);
+        expect(calculateAge("2024-11-20")).toBe(1);
+    });
+
+    test('babies', () => {
+        expect(calculateAge("2025-01-01")).toBe(0);
+        expect(calculateAge("2025-06-15")).toBe(0);
+        expect(calculateAge("2025-11-27")).toBe(0);
+    });
+});
+
+describe('calculateAge - boundary cases', () => {
+    test('one day before reference date', () => {
+        expect(calculateAge("2000-11-26")).toBe(25);
+        expect(calculateAge("1990-11-26")).toBe(35);
+    });
+
+    test('one day after reference date', () => {
+        expect(calculateAge("2000-11-28")).toBe(24);
+        expect(calculateAge("1990-11-28")).toBe(34);
+    });
+
+    test('November boundary', () => {
+        expect(calculateAge("2000-11-01")).toBe(25);
+        expect(calculateAge("2000-11-30")).toBe(24);
+    });
+
+    test('December boundary', () => {
+        expect(calculateAge("2000-12-01")).toBe(24);
+        expect(calculateAge("2000-12-31")).toBe(24);
+    });
+});
+
+describe('calculateAge - specific scenarios', () => {
+    test('leap year birthdays', () => {
+        expect(calculateAge("2000-02-29")).toBe(25);
+        expect(calculateAge("2004-02-29")).toBe(21);
+    });
+
+    test('first and last day of months', () => {
+        expect(calculateAge("2000-01-01")).toBe(25);
+        expect(calculateAge("2000-01-31")).toBe(25);
+        expect(calculateAge("2000-12-01")).toBe(24);
+        expect(calculateAge("2000-12-31")).toBe(24);
+    });
+
+    test('year transitions', () => {
+        expect(calculateAge("1999-12-31")).toBe(25);
+        expect(calculateAge("2000-01-01")).toBe(25);
     });
 });
