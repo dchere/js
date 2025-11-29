@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge, compare, getNextLocation } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -2080,6 +2080,183 @@ describe('isFizzBuzz - FizzBuzz validation', () => {
     });
 });
 
+describe('compare - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(compare("APPLE", "POPPA")).toBe("10201");
+        expect(compare("REACT", "TRACE")).toBe("11221");
+        expect(compare("DEBUGS", "PYTHON")).toBe("000000");
+        expect(compare("JAVASCRIPT", "TYPESCRIPT")).toBe("0000222222");
+        expect(compare("ORANGE", "ROUNDS")).toBe("110200");
+        expect(compare("WIRELESS", "ETHERNET")).toBe("10021000");
+    });
+
+    test('all exact matches', () => {
+        expect(compare("HELLO", "HELLO")).toBe("22222");
+        expect(compare("TEST", "TEST")).toBe("2222");
+        expect(compare("A", "A")).toBe("2");
+    });
+
+    test('no matches at all', () => {
+        expect(compare("ABC", "XYZ")).toBe("000");
+        expect(compare("HELLO", "WXYZ")).toBe("0000");
+        expect(compare("PYTHON", "ABCDEF")).toBe("000000");
+    });
+
+    test('all partial matches', () => {
+        expect(compare("ABC", "BCA")).toBe("111");
+        expect(compare("ABC", "CAB")).toBe("111");
+        expect(compare("REACT", "CATER")).toBe("11111");
+    });
+});
+
+describe('compare - duplicate letter handling', () => {
+    test('duplicate letters in both words', () => {
+        expect(compare("APPLE", "POPPA")).toBe("10201");
+        expect(compare("SPEED", "ERASE")).toBe("10011");
+    });
+
+    test('duplicate letters in secret word only', () => {
+        expect(compare("BOOK", "LOCK")).toBe("0202");
+        expect(compare("SLEEP", "HELPS")).toBe("01111");
+    });
+
+    test('duplicate letters in guess only', () => {
+        expect(compare("TRAIL", "LLLLL")).toBe("00002");
+        expect(compare("BREAD", "DDDDD")).toBe("00002");
+    });
+
+    test('multiple duplicates both sides', () => {
+        expect(compare("AABB", "BBAA")).toBe("1111");
+        expect(compare("AAAA", "AAAA")).toBe("2222");
+    });
+});
+
+describe('compare - exact matches take priority', () => {
+    test('exact match prevents partial match', () => {
+        expect(compare("REACT", "TRACE")).toBe("11221");
+        expect(compare("STALE", "STEAL")).toBe("22111");
+    });
+
+    test('exact position letter not reused for partial', () => {
+        expect(compare("SPEED", "PEERS")).toBe("11201");
+        expect(compare("LEVEL", "LEVER")).toBe("22220");
+    });
+
+    test('priority order test', () => {
+        expect(compare("AAB", "BAA")).toBe("121");
+        expect(compare("ABA", "AAB")).toBe("211");
+    });
+});
+
+describe('compare - left to right partial matching', () => {
+    test('partial matches assigned left to right', () => {
+        expect(compare("AB", "BA")).toBe("11");
+        expect(compare("ABC", "CAB")).toBe("111");
+    });
+
+    test('leftmost unmatched letter gets priority', () => {
+        expect(compare("AAB", "BXX")).toBe("100");
+        expect(compare("AAB", "XBX")).toBe("010");
+    });
+
+    test('order matters for partial matches', () => {
+        expect(compare("ABCDE", "XABCD")).toBe("01111");
+        expect(compare("ABCDE", "BCDEA")).toBe("11111");
+    });
+});
+
+describe('compare - single character', () => {
+    test('single character exact match', () => {
+        expect(compare("A", "A")).toBe("2");
+        expect(compare("Z", "Z")).toBe("2");
+    });
+
+    test('single character no match', () => {
+        expect(compare("A", "B")).toBe("0");
+        expect(compare("X", "Y")).toBe("0");
+    });
+});
+
+describe('compare - two characters', () => {
+    test('both exact', () => {
+        expect(compare("AB", "AB")).toBe("22");
+    });
+
+    test('both partial', () => {
+        expect(compare("AB", "BA")).toBe("11");
+    });
+
+    test('one exact one none', () => {
+        expect(compare("AB", "AX")).toBe("20");
+        expect(compare("AB", "XB")).toBe("02");
+    });
+
+    test('one partial one none', () => {
+        expect(compare("AB", "BX")).toBe("10");
+        expect(compare("AB", "XA")).toBe("01");
+        expect(compare("AB", "BA")).toBe("11");
+    });
+});
+
+describe('compare - mixed result patterns', () => {
+    test('mix of all three states', () => {
+        expect(compare("CRANE", "CRATE")).toBe("22202");
+        expect(compare("WORLD", "LOWER")).toBe("12101");
+    });
+
+    test('alternating patterns', () => {
+        expect(compare("ABCDEF", "AXCXEX")).toBe("202020");
+        expect(compare("ABCDEF", "BXDXFX")).toBe("101010");
+    });
+
+    test('complex real-world patterns', () => {
+        expect(compare("CRANE", "BRING")).toBe("02020");
+        expect(compare("STALE", "STEAL")).toBe("22111");
+        expect(compare("PIANO", "ROBIN")).toBe("01011");
+    });
+});
+
+describe('compare - word lengths', () => {
+    test('short words', () => {
+        expect(compare("AB", "AB")).toBe("22");
+        expect(compare("ABC", "XYZ")).toBe("000");
+    });
+
+    test('medium words', () => {
+        expect(compare("HELLO", "WORLD")).toBe("01020");
+        expect(compare("HOUSE", "MOUSE")).toBe("02222");
+    });
+
+    test('long words', () => {
+        expect(compare("JAVASCRIPT", "TYPESCRIPT")).toBe("0000222222");
+        expect(compare("DICTIONARY", "CAUTIONARY")).toBe("1002222222");
+    });
+});
+
+describe('compare - edge cases', () => {
+    test('all same letter in both', () => {
+        expect(compare("AAA", "AAA")).toBe("222");
+        expect(compare("BBBB", "BBBB")).toBe("2222");
+    });
+
+    test('all same letter different positions', () => {
+        expect(compare("AAA", "AAA")).toBe("222");
+        expect(compare("AA", "AA")).toBe("22");
+    });
+
+    test('one letter present multiple times', () => {
+        expect(compare("AAA", "AXX")).toBe("200");
+        expect(compare("AAA", "XAX")).toBe("020");
+        expect(compare("AAA", "XXA")).toBe("002");
+    });
+
+    test('returns string not array', () => {
+        const result = compare("TEST", "TEST");
+        expect(typeof result).toBe("string");
+        expect(result).toBe("2222");
+    });
+});
+
 describe('calculateAge - basic tests', () => {
     test('freeCodeCamp test cases', () => {
         expect(calculateAge("2000-11-20")).toBe(25);
@@ -2221,5 +2398,162 @@ describe('calculateAge - specific scenarios', () => {
     test('year transitions', () => {
         expect(calculateAge("1999-12-31")).toBe(25);
         expect(calculateAge("2000-01-01")).toBe(25);
+    });
+});
+
+describe('getNextLocation - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,1,2,0], [0,0,0,0]])).toEqual([2, 3]);
+        expect(getNextLocation([[0,0,0,0], [0,0,1,0], [0,2,0,0], [0,0,0,0]])).toEqual([3, 0]);
+        expect(getNextLocation([[0,2,0,0], [1,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([1, 2]);
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [2,0,0,0], [0,1,0,0]])).toEqual([1, 1]);
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,0,1,0], [0,0,0,2]])).toEqual([2, 2]);
+    });
+
+    test('horizontal movement right', () => {
+        expect(getNextLocation([[1,2,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 2]);
+        expect(getNextLocation([[0,1,2,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 3]);
+    });
+
+    test('horizontal movement left', () => {
+        expect(getNextLocation([[0,0,2,1], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 1]);
+        expect(getNextLocation([[0,2,1,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 0]);
+    });
+
+    test('vertical movement down', () => {
+        expect(getNextLocation([[1,0,0,0], [2,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([2, 0]);
+        expect(getNextLocation([[0,0,0,0], [1,0,0,0], [2,0,0,0], [0,0,0,0]])).toEqual([3, 0]);
+    });
+
+    test('vertical movement up', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [2,0,0,0], [1,0,0,0]])).toEqual([1, 0]);
+        expect(getNextLocation([[0,0,0,0], [2,0,0,0], [1,0,0,0], [0,0,0,0]])).toEqual([0, 0]);
+    });
+});
+
+describe('getNextLocation - diagonal movement', () => {
+    test('diagonal down-right', () => {
+        expect(getNextLocation([[1,0,0,0], [0,2,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([2, 2]);
+        expect(getNextLocation([[0,0,0,0], [0,1,0,0], [0,0,2,0], [0,0,0,0]])).toEqual([3, 3]);
+    });
+
+    test('diagonal down-left', () => {
+        expect(getNextLocation([[0,0,0,1], [0,0,2,0], [0,0,0,0], [0,0,0,0]])).toEqual([2, 1]);
+        expect(getNextLocation([[0,0,0,0], [0,0,1,0], [0,2,0,0], [0,0,0,0]])).toEqual([3, 0]);
+    });
+
+    test('diagonal up-right', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,2,0,0], [1,0,0,0]])).toEqual([1, 2]);
+        expect(getNextLocation([[0,0,0,0], [0,0,2,0], [0,1,0,0], [0,0,0,0]])).toEqual([0, 3]);
+    });
+
+    test('diagonal up-left', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,0,2,0], [0,0,0,1]])).toEqual([1, 1]);
+        expect(getNextLocation([[0,0,0,0], [0,2,0,0], [0,0,1,0], [0,0,0,0]])).toEqual([0, 0]);
+    });
+});
+
+describe('getNextLocation - wall bounces', () => {
+    test('bounce off right wall - horizontal', () => {
+        expect(getNextLocation([[0,0,1,2], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 2]);
+        expect(getNextLocation([[0,0,0,0], [0,0,1,2], [0,0,0,0], [0,0,0,0]])).toEqual([1, 2]);
+    });
+
+    test('bounce off left wall - horizontal', () => {
+        expect(getNextLocation([[2,1,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 1]);
+        expect(getNextLocation([[0,0,0,0], [2,1,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([1, 1]);
+    });
+
+    test('bounce off bottom wall - vertical', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [1,0,0,0], [2,0,0,0]])).toEqual([2, 0]);
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,1,0,0], [0,2,0,0]])).toEqual([2, 1]);
+    });
+
+    test('bounce off top wall - vertical', () => {
+        expect(getNextLocation([[2,0,0,0], [1,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([1, 0]);
+        expect(getNextLocation([[0,2,0,0], [0,1,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([1, 1]);
+    });
+});
+
+describe('getNextLocation - corner bounces', () => {
+    test('bounce off top-right corner', () => {
+        expect(getNextLocation([[0,0,1,0], [0,0,0,2], [0,0,0,0], [0,0,0,0]])).toEqual([2, 2]);
+    });
+
+    test('bounce off top-left corner', () => {
+        expect(getNextLocation([[0,2,0,0], [1,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([1, 2]);
+    });
+
+    test('bounce off bottom-right corner', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,0,1,0], [0,0,0,2]])).toEqual([2, 2]);
+    });
+
+    test('bounce off bottom-left corner', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [2,0,0,0], [0,1,0,0]])).toEqual([1, 1]);
+    });
+});
+
+describe('getNextLocation - diagonal wall bounces', () => {
+    test('diagonal hits right wall', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,1,0], [0,0,0,2], [0,0,0,0]])).toEqual([3, 2]);
+    });
+
+    test('diagonal hits left wall', () => {
+        expect(getNextLocation([[0,0,0,0], [0,1,0,0], [2,0,0,0], [0,0,0,0]])).toEqual([3, 1]);
+    });
+
+    test('diagonal hits bottom wall', () => {
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,1,0,0], [0,0,2,0]])).toEqual([2, 3]);
+    });
+
+    test('diagonal hits top wall', () => {
+        expect(getNextLocation([[0,0,2,0], [0,1,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([1, 3]);
+    });
+});
+
+describe('getNextLocation - different matrix sizes', () => {
+    test('3x3 matrix', () => {
+        expect(getNextLocation([[1,2,0], [0,0,0], [0,0,0]])).toEqual([0, 2]);
+        expect(getNextLocation([[0,0,0], [1,0,0], [0,2,0]])).toEqual([1, 2]);
+    });
+
+    test('5x5 matrix', () => {
+        expect(getNextLocation([[0,0,0,0,0], [0,1,2,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]])).toEqual([1, 3]);
+        expect(getNextLocation([[0,0,0,0,0], [0,0,0,0,0], [0,0,1,0,0], [0,0,0,2,0], [0,0,0,0,0]])).toEqual([4, 4]);
+    });
+
+    test('2x6 matrix', () => {
+        expect(getNextLocation([[1,2,0,0,0,0], [0,0,0,0,0,0]])).toEqual([0, 2]);
+        expect(getNextLocation([[0,0,0,0,0,0], [0,0,1,2,0,0]])).toEqual([1, 4]);
+    });
+
+    test('6x2 matrix', () => {
+        expect(getNextLocation([[1,0], [2,0], [0,0], [0,0], [0,0], [0,0]])).toEqual([2, 0]);
+        expect(getNextLocation([[0,0], [0,0], [1,0], [0,0], [2,0], [0,0]])).toEqual([2, 0]);
+    });
+});
+
+describe('getNextLocation - edge cases', () => {
+    test('ball at edges moving inward', () => {
+        expect(getNextLocation([[1,0,0,0], [2,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([2, 0]);
+        expect(getNextLocation([[0,0,0,1], [0,0,0,2], [0,0,0,0], [0,0,0,0]])).toEqual([2, 3]);
+    });
+
+    test('ball near corner moving along edge', () => {
+        expect(getNextLocation([[1,2,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 2]);
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [0,0,0,0], [1,2,0,0]])).toEqual([3, 2]);
+    });
+
+    test('consecutive bounces', () => {
+        expect(getNextLocation([[0,1,2,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])).toEqual([0, 3]);
+        expect(getNextLocation([[0,0,0,0], [0,0,0,0], [1,0,0,0], [2,0,0,0]])).toEqual([2, 0]);
+    });
+
+    test('returns array format', () => {
+        const result = getNextLocation([[1,2,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]);
+        expect(Array.isArray(result)).toBe(true);
+        expect(result.length).toBe(2);
+        expect(typeof result[0]).toBe('number');
+        expect(typeof result[1]).toBe('number');
     });
 });

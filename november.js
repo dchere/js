@@ -368,4 +368,55 @@ function calculateAge(birthday) {
   return age;
 }
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge };
+function compare(word, guess) {
+  const result = new Array(guess.length).fill('0');
+  const usedIndices = new Set();
+
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] === word[i]) {
+      result[i] = '2';
+      usedIndices.add(i);
+    }
+  }
+
+  for (let i = 0; i < guess.length; i++) {
+    if (result[i] === '2') continue;
+
+    for (let j = 0; j < word.length; j++) {
+      if (!usedIndices.has(j) && guess[i] === word[j]) {
+        result[i] = '1';
+        usedIndices.add(j);
+        break;
+      }
+    }
+  }
+
+  return result.join('');
+}
+
+function getNextLocation(matrix) {
+  let prev = null;
+  let curr = null;
+
+  for (let r = 0; r < matrix.length; r++) {
+    for (let c = 0; c < matrix[r].length; c++) {
+      if (matrix[r][c] === 1) prev = [r, c];
+      if (matrix[r][c] === 2) curr = [r, c];
+    }
+  }
+
+  let dr = curr[0] - prev[0];
+  let dc = curr[1] - prev[1];
+  const maxR = matrix.length - 1;
+  const maxC = matrix[0].length - 1;
+
+  let nextR = curr[0] + dr;
+  let nextC = curr[1] + dc;
+
+  if (nextR < 0 || nextR > maxR) nextR = curr[0] - dr;
+  if (nextC < 0 || nextC > maxC) nextC = curr[1] - dc;
+
+  return [nextR, nextC];
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge, compare, getNextLocation };
