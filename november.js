@@ -1,3 +1,9 @@
+/**
+ * Counts the number of character differences between two strings.
+ * @param {string} textA - First string to compare.
+ * @param {string} textB - Second string to compare.
+ * @returns {number} Number of differing characters at same positions.
+ */
 function countDifferences(textA, textB) {
     let differences = 0;
     for (let i = 0; i < textA.length; i++) {
@@ -8,6 +14,12 @@ function countDifferences(textA, textB) {
     return differences;
 }
 
+/**
+ * Determines if two fingerprints match based on difference threshold.
+ * @param {string} fingerprintA - First fingerprint to compare.
+ * @param {string} fingerprintB - Second fingerprint to compare.
+ * @returns {boolean} True if fingerprints match within threshold.
+ */
 function isMatch(fingerprintA, fingerprintB) {
     if (fingerprintA.length !== fingerprintB.length) return false;
     
@@ -15,9 +27,19 @@ function isMatch(fingerprintA, fingerprintB) {
     return differences <= fingerprintA.length;
 }
 
+/**
+ * Repeats a string to create exactly 100 characters.
+ * @param {string} chars - The string to repeat.
+ * @returns {string} A 100-character string.
+ */
 const oneHundred = (chars) => chars.repeat(Math.ceil(100/chars.length)).substring(0,100);
 
-
+/**
+ * Calculates the total number of rectangles in a grid.
+ * @param {number} width - Width of the grid.
+ * @param {number} height - Height of the grid.
+ * @returns {number} Total number of possible rectangles.
+ */
 const countRectangles = (width, height) => 0.25 * width * (width + 1) * height * (height + 1);
 
 /**
@@ -64,6 +86,11 @@ function verify(message, key, signature) {
   return signature === (messageValue(message) + messageValue(key));
 }
 
+/**
+ * Determines the post type based on message length.
+ * @param {string} message - The message to check.
+ * @returns {string} 'short post', 'long post', or 'invalid post'.
+ */
 function canPost(message) {
     if (message.length <= 40) return "short post";
     if (message.length <= 80) return "long post";
@@ -192,6 +219,11 @@ function shiftArray(arr, n) {
   return [...arr.slice(shift), ...arr.slice(0, shift)];
 }
 
+/**
+ * Counts vowels and consonants in a string.
+ * @param {string} str - The string to analyze.
+ * @returns {number[]} Array with [vowel count, consonant count].
+ */
 function count(str) {
 
   const vowelSet = new Set(['a', 'e', 'i', 'o', 'u']);
@@ -210,6 +242,12 @@ function count(str) {
   return [vowels, consonants];
 }
 
+/**
+ * Searches for a word horizontally in a character matrix.
+ * @param {string[][]} matrix - 2D array of characters.
+ * @param {string} word - Word to search for.
+ * @returns {number[][]|null} Start and end coordinates or null.
+ */
 function searchHorizontal(matrix, word) {
   const rows = matrix.length;
   const cols = matrix[0].length;
@@ -230,6 +268,12 @@ function searchHorizontal(matrix, word) {
   return null;
 }
 
+/**
+ * Searches for a word vertically in a character matrix.
+ * @param {string[][]} matrix - 2D array of characters.
+ * @param {string} word - Word to search for.
+ * @returns {number[][]|null} Start and end coordinates or null.
+ */
 function searchVertical(matrix, word) {
   const rows = matrix.length;
   const cols = matrix[0].length;
@@ -250,13 +294,29 @@ function searchVertical(matrix, word) {
   return null;
 }
 
+/**
+ * Finds a word in a matrix horizontally or vertically.
+ * @param {string[][]} matrix - 2D array of characters.
+ * @param {string} word - Word to search for.
+ * @returns {number[][]|null} Start and end coordinates or null.
+ */
 const findWord = (matrix, word) => searchHorizontal(matrix, word) || searchVertical(matrix, word);
-  
+
+/**
+ * Counts the number of words in a sentence.
+ * @param {string} sentence - The sentence to count words in.
+ * @returns {number} Number of words.
+ */
 const countWords = (sentence) => {
   if (sentence.length === 0) return 0;
   return sentence.split(' ').length;
 }
 
+/**
+ * Calculates combinations of selecting cards from a 52-card deck.
+ * @param {number} cards - Number of cards to select.
+ * @returns {number} Number of possible combinations.
+ */
 function combinations(cards) {
   const n = 52; 
   // Use symmetry: C(n, k) = C(n, n-k)
@@ -270,6 +330,12 @@ function combinations(cards) {
   return Math.round(result); // Round to insure integer result
 }
 
+/**
+ * Creates a 2D matrix filled with zeros.
+ * @param {number} rows - Number of rows.
+ * @param {number} cols - Number of columns.
+ * @returns {number[][]} Matrix filled with zeros.
+ */
 function buildMatrix(rows, cols) {
   const matrix = [];
   for (let i = 0; i < rows; i++) {
@@ -278,6 +344,11 @@ function buildMatrix(rows, cols) {
   return matrix;
 }
 
+/**
+ * Finds the longest word in a sentence (letters only).
+ * @param {string} sentence - The sentence to analyze.
+ * @returns {string} The longest word without punctuation.
+ */
 function longestWord(sentence) {
 
   let longest = '';
@@ -291,14 +362,31 @@ function longestWord(sentence) {
   return longest;
 }
 
+/**
+ * Calculates the least common multiple of two numbers.
+ * @param {number} a - First number.
+ * @param {number} b - Second number.
+ * @returns {number} The least common multiple.
+ */
 const lcm = (a, b) => a * b / gcd(a, b);
 
+/**
+ * Scales recipe ingredient quantities by a multiplier.
+ * @param {string[]} ingredients - Array of ingredient strings with quantities.
+ * @param {number} scale - Scale factor to multiply quantities.
+ * @returns {string[]} Scaled ingredient strings.
+ */
 const scaleRecipe = (ingredients, scale) => ingredients.map((item) => {
     const i0 = item.indexOf(' ');
     const scaledQuantity = parseFloat(item.slice(0, i0)) * scale;
     return scaledQuantity.toString() + ' ' + item.slice(i0 + 1);
   });
 
+/**
+ * Counts occurrences of each letter in a sentence.
+ * @param {string} sentence - The sentence to analyze.
+ * @returns {string[]} Sorted array of 'letter count' strings.
+ */
 function countCharacters(sentence) {
   const counts = {};
   for (const char of sentence.toLowerCase()) {
@@ -311,6 +399,12 @@ function countCharacters(sentence) {
   });
 }
 
+/**
+ * Validates if a message matches a validator pattern.
+ * @param {string} message - The message to validate.
+ * @param {string} validator - String where each char matches word's first letter.
+ * @returns {boolean} True if message matches validator pattern.
+ */
 function isValidMessage(message, validator) {
   if (message === '' && validator === '') {
     return true;
@@ -327,6 +421,11 @@ function isValidMessage(message, validator) {
   return true;
 }
 
+/**
+ * Generates FizzBuzz sequence up to n.
+ * @param {number} n - The upper limit.
+ * @returns {Array} Array with numbers and Fizz/Buzz/FizzBuzz strings.
+ */
 function fizzBuzz(n) {
   const result = [];
   for (let i = 1; i <= n; i++) {
@@ -343,6 +442,11 @@ function fizzBuzz(n) {
   return result;
 }
 
+/**
+ * Validates if a sequence is a correct FizzBuzz sequence.
+ * @param {Array} sequence - The sequence to validate.
+ * @returns {boolean} True if valid FizzBuzz sequence.
+ */
 function isFizzBuzz(sequence) {
   if (!sequence || sequence.length === 0) {
     return false;
@@ -359,6 +463,11 @@ function isFizzBuzz(sequence) {
   return true;
 }
 
+/**
+ * Calculates age based on birthday and current date.
+ * @param {string} birthday - Birthday in YYYY-MM-DD format.
+ * @returns {number} Age in years.
+ */
 function calculateAge(birthday) {
   const [year, month, day] = birthday.split('-').map(Number);
   let age = 2025 - year;
@@ -368,6 +477,12 @@ function calculateAge(birthday) {
   return age;
 }
 
+/**
+ * Compares a guess to a word and returns match pattern.
+ * @param {string} word - The target word.
+ * @param {string} guess - The guessed word.
+ * @returns {string} String of '0', '1', '2' indicating match quality.
+ */
 function compare(word, guess) {
   const result = new Array(guess.length).fill('0');
   const usedIndices = new Set();
@@ -394,6 +509,11 @@ function compare(word, guess) {
   return result.join('');
 }
 
+/**
+ * Predicts next location based on movement pattern in matrix.
+ * @param {number[][]} matrix - 2D array with 1 (previous) and 2 (current).
+ * @returns {number[]} Coordinates [row, col] of next location.
+ */
 function getNextLocation(matrix) {
   let prev = null;
   let curr = null;
@@ -419,6 +539,11 @@ function getNextLocation(matrix) {
   return [nextR, nextC];
 }
 
+/**
+ * Detects if text is likely AI-generated based on patterns.
+ * @param {string} text - The text to analyze.
+ * @returns {string} 'AI' or 'Human'.
+ */
 function detectAI(text) {
   const dashCount = (text.match(/-/g) || []).length;
   if (dashCount >= 2) return 'AI';
