@@ -1,3 +1,8 @@
+/**
+ * Generates a random hex color code with the specified dominant color.
+ * @param {string} color - The dominant color ('red', 'green', or 'blue').
+ * @returns {string} The hex color code or 'Invalid color'.
+ */
 function generateHex(color) {
 
     if (color !== "red" && color !== "green" && color !== "blue") {
@@ -17,6 +22,11 @@ function generateHex(color) {
   } 
 }
 
+/**
+ * Converts a string to camelCase format.
+ * @param {string} s - The string to convert.
+ * @returns {string} The camelCase string.
+ */
 function toCamelCase(s) {
 
   const words = s.split(/[\s\-_]+/).filter(word => word.length > 0);
@@ -32,8 +42,19 @@ function toCamelCase(s) {
   return camelCased.join('');
 }
 
+/**
+ * Calculates the sum of squares from 1 to n.
+ * @param {number} n - The upper limit.
+ * @returns {number} The sum of squares.
+ */
 const sumOfSquares = (n) => n * (n + 1) * (2 * n + 1) / 6;
 
+/**
+ * Generates a Fibonacci sequence of specified length.
+ * @param {number[]} startSequence - The first two numbers of the sequence.
+ * @param {number} length - The desired length of the sequence.
+ * @returns {number[]} The Fibonacci sequence.
+ */
 function fibonacciSequence(startSequence, length) {
 
   if (length === 0) return [];
@@ -48,6 +69,12 @@ function fibonacciSequence(startSequence, length) {
   return sequence;
 }
 
+/**
+ * Calculates the pace per mile given total miles and duration.
+ * @param {number} miles - The number of miles.
+ * @param {string} duration - The total duration in 'MM:SS' format.
+ * @returns {string} The pace per mile in 'MM:SS' format.
+ */
 function milePace(miles, duration) {
 
   const [minutes, seconds] = duration.split(':').map(Number);
@@ -60,6 +87,12 @@ function milePace(miles, duration) {
   return `${String(paceMinutes).padStart(2, '0')}:${String(paceRemainingSeconds).padStart(2, '0')}`;
 }
 
+/**
+ * Calculates total candles burned when leftovers can make new candles.
+ * @param {number} candles - The initial number of candles.
+ * @param {number} leftoversNeeded - The number of leftovers needed to make a new candle.
+ * @returns {number} The total number of candles burned.
+ */
 function burnCandles(candles, leftoversNeeded) {
 
   let burned = 0;
@@ -75,6 +108,11 @@ function burnCandles(candles, leftoversNeeded) {
   return burned;
 }
 
+/**
+ * Checks if a number (including negative) is an unnatural prime.
+ * @param {number} n - The number to check.
+ * @returns {boolean} True if the absolute value is prime.
+ */
 function isUnnaturalPrime(n) {
 
   if (n === 0 || n === 1 || n === -1) return false;
@@ -90,6 +128,11 @@ function isUnnaturalPrime(n) {
   return true;
 }
 
+/**
+ * Scrambles the middle letters of each word alphabetically.
+ * @param {string} text - The text to scramble.
+ * @returns {string} The scrambled text.
+ */
 function jbelmu(text) {
   return text.split(' ').map(word => {
     if (word.length <= 2) return word;
@@ -100,6 +143,12 @@ function jbelmu(text) {
   }).join(' ');
 }
 
+/**
+ * Evaluates a sequence of numbers with cycling operators.
+ * @param {number[]} numbers - The array of numbers.
+ * @param {string[]} operators - The array of operators ('+', '-', '*', '/', '%').
+ * @returns {number} The result of the evaluation.
+ */
 function evaluate(numbers, operators) {
 
   let result = numbers[0];
@@ -118,6 +167,11 @@ function evaluate(numbers, operators) {
   return result;
 }
 
+/**
+ * Checks if a string has equal vowel counts in both halves.
+ * @param {string} s - The string to check.
+ * @returns {boolean} True if the string is balanced.
+ */
 function isBalanced(s) {
 
   const vowels = new Set(['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']);
@@ -132,6 +186,12 @@ function isBalanced(s) {
   return countVowels(firstHalf) === countVowels(secondHalf);
 }
 
+/**
+ * Finds two indices in an array that sum to the target value.
+ * @param {number[]} arr - The array of numbers.
+ * @param {number} target - The target sum.
+ * @returns {number[]|string} Array of two indices or 'Target not found'.
+ */
 function findTarget(arr, target) {
 
   const seen = new Map();
@@ -147,6 +207,12 @@ function findTarget(arr, target) {
   return "Target not found";
 }
 
+/**
+ * Simulates a battle between two armies based on character strength.
+ * @param {string} myArmy - Your army string.
+ * @param {string} opposingArmy - The opposing army string.
+ * @returns {string} The battle result.
+ */
 function battle(myArmy, opposingArmy) {
 
   if (myArmy.length > opposingArmy.length) return "Opponent retreated";
@@ -174,6 +240,11 @@ function battle(myArmy, opposingArmy) {
   return "It was a tie";
 }
 
+/**
+ * Calculates the factorial of a number.
+ * @param {number} n - The number to calculate factorial for.
+ * @returns {number} The factorial of n.
+ */
 function factorial(n) {
 
   if (n === 0) return 1;
@@ -184,6 +255,12 @@ function factorial(n) {
   return result;
 }
 
+/**
+ * Checks if a number string is valid for a given base.
+ * @param {string} n - The number string to validate.
+ * @param {number} base - The base (2-36).
+ * @returns {boolean} True if the number is valid for the base.
+ */
 function isValidNumber(n, base) {
 
   const upperN = n.toUpperCase();
@@ -206,6 +283,11 @@ function isValidNumber(n, base) {
   return true;
 }
 
+/**
+ * Counts how many perfect squares contain the digit 3.
+ * @param {number} n - The upper limit to check.
+ * @returns {number} The count of squares containing 3.
+ */
 function squaresWithThree(n) {
   
   let count = 0; 
@@ -219,13 +301,29 @@ function squaresWithThree(n) {
   return count;
 }
 
+/**
+ * Removes spaces, converts to uppercase, and adds double spaces between characters.
+ * @param {string} s - The input string.
+ * @returns {string} The transformed string.
+ */
 const spaceJam = (s) => s.replace(/ /g, '').toUpperCase().split('').join('  ');
 
+/**
+ * Checks if two strings are anagrams of each other.
+ * @param {string} str1 - The first string.
+ * @param {string} str2 - The second string.
+ * @returns {boolean} True if the strings are anagrams.
+ */
 const areAnagrams = (str1, str2) => {
   const normalize = (s) => s.toLowerCase().replace(/ /g, '').split('').sort().join('');
   return normalize(str1) === normalize(str2);
 }
 
+/**
+ * Decodes a string by reversing text within parentheses.
+ * @param {string} s - The string to decode.
+ * @returns {string} The decoded string.
+ */
 function decode(s) {
   while (s.includes('(')) {
     s = s.replace(/\([^()]*\)/g, (match) => {
@@ -235,6 +333,12 @@ function decode(s) {
   return s;
 }
 
+/**
+ * Finds the best laptop price within budget (prefers second most expensive).
+ * @param {number[]} laptops - Array of laptop prices.
+ * @param {number} budget - The budget limit.
+ * @returns {number} The best laptop price or 0 if none available.
+ */
 function getLaptopCost(laptops, budget) {
   const unique = [...new Set(laptops)].sort((a, b) => b - a);
   
@@ -249,6 +353,12 @@ function getLaptopCost(laptops, budget) {
   return 0;
 }
 
+/**
+ * Decodes a Caesar cipher message with the given shift.
+ * @param {string} message - The encoded message.
+ * @param {number} shift - The shift amount to decode.
+ * @returns {string} The decoded message.
+ */
 function decodeMessage(message, shift) {
 
   let decoded = '';
@@ -268,6 +378,11 @@ function decodeMessage(message, shift) {
   return decoded;
 }
 
+/**
+ * Finds all duplicate numbers in an array.
+ * @param {number[]} arr - The array to check.
+ * @returns {number[]} Sorted array of duplicate numbers.
+ */
 function findDuplicates(arr) {
 
   const counts = {};
