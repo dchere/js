@@ -1,4 +1,4 @@
-const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge, compare, getNextLocation } = require('./november');
+const { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge, compare, getNextLocation, detectAI } = require('./november');
 
 describe('isMatch', () => {
     test('freecodecamp.org test cases', () => {
@@ -2555,5 +2555,299 @@ describe('getNextLocation - edge cases', () => {
         expect(result.length).toBe(2);
         expect(typeof result[0]).toBe('number');
         expect(typeof result[1]).toBe('number');
+    });
+});
+
+describe('detectAI - basic tests', () => {
+    test('freeCodeCamp test cases', () => {
+        expect(detectAI("The quick brown fox jumped over the lazy dog.")).toBe("Human");
+        expect(detectAI("The hypersonic brown fox - jumped (over) the lazy dog.")).toBe("Human");
+        expect(detectAI("Yes - you're right! I made a mistake there - let me try again.")).toBe("AI");
+        expect(detectAI("The extraordinary students were studying vivaciously.")).toBe("AI");
+        expect(detectAI("The (excited) student was (coding) in the library.")).toBe("AI");
+    });
+
+    test('simple human text', () => {
+        expect(detectAI("Hello world.")).toBe("Human");
+        expect(detectAI("I like cats.")).toBe("Human");
+        expect(detectAI("This is a test.")).toBe("Human");
+    });
+
+    test('simple AI text', () => {
+        expect(detectAI("Hello - world - test")).toBe("AI");
+        expect(detectAI("(Hello) (world) test")).toBe("AI");
+        expect(detectAI("Testing something wonderful beautiful")).toBe("AI");
+    });
+});
+
+describe('detectAI - dash rules', () => {
+    test('no dashes', () => {
+        expect(detectAI("Hello world")).toBe("Human");
+        expect(detectAI("Test sentence here")).toBe("Human");
+    });
+
+    test('one dash', () => {
+        expect(detectAI("Hello - world")).toBe("Human");
+        expect(detectAI("Test - sentence")).toBe("Human");
+    });
+
+    test('exactly two dashes', () => {
+        expect(detectAI("Hello - world - test")).toBe("AI");
+        expect(detectAI("A - B - C")).toBe("AI");
+    });
+
+    test('more than two dashes', () => {
+        expect(detectAI("A - B - C - D")).toBe("AI");
+        expect(detectAI("One - two - three - four - five")).toBe("AI");
+    });
+
+    test('dashes at different positions', () => {
+        expect(detectAI("- Hello - world")).toBe("AI");
+        expect(detectAI("Hello - world -")).toBe("AI");
+        expect(detectAI("- - Hello")).toBe("AI");
+    });
+});
+
+describe('detectAI - parenthesis rules', () => {
+    test('no parenthesis', () => {
+        expect(detectAI("Hello world")).toBe("Human");
+        expect(detectAI("Test sentence")).toBe("Human");
+    });
+
+    test('one set of parenthesis', () => {
+        expect(detectAI("Hello (world)")).toBe("Human");
+        expect(detectAI("Test (sentence) here")).toBe("Human");
+    });
+
+    test('exactly two sets', () => {
+        expect(detectAI("Hello (world) (test)")).toBe("AI");
+        expect(detectAI("(A) and (B)")).toBe("AI");
+    });
+
+    test('more than two sets', () => {
+        expect(detectAI("(A) (B) (C)")).toBe("AI");
+        expect(detectAI("(one) (two) (three) (four)")).toBe("AI");
+    });
+
+    test('with text inside', () => {
+        expect(detectAI("The (quick) brown (fox) jumps.")).toBe("AI");
+        expect(detectAI("This (is a test) with (multiple words) inside.")).toBe("AI");
+    });
+
+    test('empty parenthesis', () => {
+        expect(detectAI("Hello () world ()")).toBe("AI");
+        expect(detectAI("() () test")).toBe("AI");
+    });
+});
+
+describe('detectAI - long word rules', () => {
+    test('no long words', () => {
+        expect(detectAI("The cat sat on the mat.")).toBe("Human");
+        expect(detectAI("I like to code.")).toBe("Human");
+    });
+
+    test('one long word', () => {
+        expect(detectAI("The elephant is big.")).toBe("Human");
+        expect(detectAI("Testing is fun.")).toBe("Human");
+    });
+
+    test('two long words', () => {
+        expect(detectAI("The elephant and giraffe are tall.")).toBe("Human");
+        expect(detectAI("Testing something here.")).toBe("Human");
+    });
+
+    test('exactly three long words', () => {
+        expect(detectAI("The elephant giraffe and monkeys are here.")).toBe("AI");
+        expect(detectAI("Testing something special today.")).toBe("AI");
+    });
+
+    test('more than three long words', () => {
+        expect(detectAI("The elephant giraffe monkeys and dolphins are amazing.")).toBe("AI");
+        expect(detectAI("Testing something special wonderful beautiful.")).toBe("AI");
+    });
+
+    test('exactly 7 letters', () => {
+        expect(detectAI("Testing testing testing.")).toBe("AI");
+        expect(detectAI("Friends friends friends.")).toBe("AI");
+    });
+
+    test('more than 7 letters', () => {
+        expect(detectAI("Something beautiful wonderful.")).toBe("AI");
+        expect(detectAI("Extraordinary magnificent spectacular.")).toBe("AI");
+    });
+});
+
+describe('detectAI - punctuation handling', () => {
+    test('with periods', () => {
+        expect(detectAI("Hello. World. Test.")).toBe("Human");
+        expect(detectAI("Testing. Something. Wonderful.")).toBe("AI");
+    });
+
+    test('with commas', () => {
+        expect(detectAI("Hello, world, test")).toBe("Human");
+        expect(detectAI("Testing, something, wonderful")).toBe("AI");
+    });
+
+    test('with exclamation marks', () => {
+        expect(detectAI("Hello! World! Test!")).toBe("Human");
+        expect(detectAI("Testing! Something! Wonderful!")).toBe("AI");
+    });
+
+    test('with question marks', () => {
+        expect(detectAI("Hello? World? Test?")).toBe("Human");
+        expect(detectAI("Testing? Something? Wonderful?")).toBe("AI");
+    });
+
+    test('mixed punctuation', () => {
+        expect(detectAI("Hello! World? Test.")).toBe("Human");
+        expect(detectAI("Testing! Something? Wonderful.")).toBe("AI");
+    });
+});
+
+describe('detectAI - word extraction', () => {
+    test('ignores punctuation in word counting', () => {
+        expect(detectAI("Testing! Something? Wonderful.")).toBe("AI");
+        expect(detectAI("Hello, world!")).toBe("Human");
+    });
+
+    test('counts only letters', () => {
+        expect(detectAI("test123 word456 hello789")).toBe("Human");
+        expect(detectAI("testing123 something456 wonderful789")).toBe("AI");
+    });
+
+    test('handles contractions', () => {
+        expect(detectAI("I'm you're they're")).toBe("Human");
+        expect(detectAI("I'm testing something wonderful")).toBe("AI");
+    });
+});
+
+describe('detectAI - combined rules', () => {
+    test('two dashes and long words', () => {
+        expect(detectAI("Testing - something - wonderful")).toBe("AI");
+    });
+
+    test('two parenthesis and long words', () => {
+        expect(detectAI("(Testing) something (wonderful)")).toBe("AI");
+    });
+
+    test('two dashes and two parenthesis', () => {
+        expect(detectAI("(Hi) - test - (bye)")).toBe("AI");
+    });
+
+    test('all three rules met', () => {
+        expect(detectAI("(Testing) - something - (wonderful) beautiful")).toBe("AI");
+    });
+
+    test('one of each rule - not enough', () => {
+        expect(detectAI("Testing - (hello) world")).toBe("Human");
+    });
+});
+
+describe('detectAI - edge cases', () => {
+    test('empty string', () => {
+        expect(detectAI("")).toBe("Human");
+    });
+
+    test('only punctuation', () => {
+        expect(detectAI("...")).toBe("Human");
+        expect(detectAI("!!!")).toBe("Human");
+    });
+
+    test('only dashes', () => {
+        expect(detectAI("--")).toBe("AI");
+        expect(detectAI("---")).toBe("AI");
+    });
+
+    test('only parenthesis', () => {
+        expect(detectAI("()()")).toBe("AI");
+        expect(detectAI("()()()")).toBe("AI");
+    });
+
+    test('single word', () => {
+        expect(detectAI("Hello")).toBe("Human");
+        expect(detectAI("Testing")).toBe("Human");
+    });
+});
+
+describe('detectAI - return value validation', () => {
+    test('returns string', () => {
+        expect(typeof detectAI("Hello world")).toBe("string");
+        expect(typeof detectAI("Test - test - test")).toBe("string");
+    });
+
+    test('returns AI or Human', () => {
+        const result1 = detectAI("Hello world");
+        expect(result1 === "AI" || result1 === "Human").toBe(true);
+        const result2 = detectAI("Test - test - test");
+        expect(result2 === "AI" || result2 === "Human").toBe(true);
+    });
+
+    test('exact string match', () => {
+        expect(detectAI("Hello world")).toBe("Human");
+        expect(detectAI("Test - test - test")).toBe("AI");
+    });
+});
+
+describe('detectAI - case sensitivity', () => {
+    test('uppercase letters', () => {
+        expect(detectAI("HELLO WORLD")).toBe("Human");
+        expect(detectAI("TESTING SOMETHING WONDERFUL")).toBe("AI");
+    });
+
+    test('mixed case', () => {
+        expect(detectAI("HeLLo WoRLd")).toBe("Human");
+        expect(detectAI("TeStInG SoMeThInG WoNdErFuL")).toBe("AI");
+    });
+});
+
+describe('detectAI - realistic examples', () => {
+    test('human-like short sentences', () => {
+        expect(detectAI("I went to the store.")).toBe("Human");
+        expect(detectAI("The cat is sleeping.")).toBe("Human");
+        expect(detectAI("We had fun today.")).toBe("Human");
+    });
+
+    test('AI-like formal text', () => {
+        expect(detectAI("The extraordinary circumstances required immediate attention.")).toBe("AI");
+        expect(detectAI("However - it's important to consider - the alternative approaches.")).toBe("AI");
+        expect(detectAI("The (comprehensive) analysis revealed (significant) patterns.")).toBe("AI");
+    });
+
+    test('technical writing', () => {
+        expect(detectAI("The algorithm processes data efficiently.")).toBe("AI");
+        expect(detectAI("Use the method to find data.")).toBe("Human");
+    });
+});
+
+describe('detectAI - boundary conditions', () => {
+    test('exactly at thresholds', () => {
+        expect(detectAI("a - b - c")).toBe("AI");
+        expect(detectAI("(a) (b) test")).toBe("AI");
+        expect(detectAI("testing testing testing")).toBe("AI");
+    });
+
+    test('just below thresholds', () => {
+        expect(detectAI("a - b")).toBe("Human");
+        expect(detectAI("(a) test")).toBe("Human");
+        expect(detectAI("testing testing")).toBe("Human");
+    });
+});
+
+describe('detectAI - word length variations', () => {
+    test('6 letter words', () => {
+        expect(detectAI("Please answer tested")).toBe("Human");
+    });
+
+    test('7 letter words', () => {
+        expect(detectAI("Testing solving working")).toBe("AI");
+    });
+
+    test('8 letter words', () => {
+        expect(detectAI("Building creating teaching")).toBe("AI");
+    });
+
+    test('mixed lengths', () => {
+        expect(detectAI("I am testing something wonderful today")).toBe("AI");
+        expect(detectAI("I am happy today")).toBe("Human");
     });
 });

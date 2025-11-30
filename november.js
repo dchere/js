@@ -419,4 +419,15 @@ function getNextLocation(matrix) {
   return [nextR, nextC];
 }
 
-module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge, compare, getNextLocation };
+function detectAI(text) {
+  const dashCount = (text.match(/-/g) || []).length;
+  if (dashCount >= 2) return 'AI';
+  const parenCount = (text.match(/\([^)]*\)/g) || []).length;
+  if (parenCount >= 2) return 'AI';
+  const words = text.match(/[A-Za-z]+/g) || [];
+  const longWords = words.filter(word => word.length >= 7).length;
+  if (longWords >= 3) return 'AI';
+  return 'Human';
+}
+
+module.exports = { countDifferences, isMatch, oneHundred, countRectangles, verify, canPost, gcd, convert, infected, getExtension, imageSearch, generateSignature, getWeekday, daysUntilWeekend, shiftArray, count, findWord, countWords, combinations, buildMatrix, longestWord, lcm, scaleRecipe, countCharacters, isValidMessage, fizzBuzz, isFizzBuzz, calculateAge, compare, getNextLocation, detectAI };
